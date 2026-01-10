@@ -109,6 +109,7 @@
       <div style="margin-bottom: 8px;">
         <button id="loginBtn" class="small ghost">Đăng nhập Admin</button>
         <div id="loginForm" class="login-form" style="display: none;">
+          <input id="adminEmailInput" type="email" placeholder="Admin email">
           <input id="adminPwdInput" type="password" placeholder="Mật khẩu Admin">
           <button id="loginConfirmBtn" class="small ghost">OK</button>
         </div>
@@ -199,58 +200,144 @@ const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const adminStatus = document.getElementById('adminStatus');
 const loginForm = document.getElementById('loginForm');
+const adminEmailInput = document.getElementById('adminEmailInput');
 const adminPwdInput = document.getElementById('adminPwdInput');
 const loginConfirmBtn = document.getElementById('loginConfirmBtn');
 
-/* ------------------ CẤU HÌNH ADMIN ------------------ */
-const ADMIN_PASSWORD = 'admin';
-const ADMIN_LS_KEY = 'isAdmin_v1';
-function isAdmin() { return localStorage.getItem(ADMIN_LS_KEY) === '1'; }
-function applyPermission() {
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin() ? '' : 'none');
-  if (isAdmin()) { loginBtn.style.display='none'; loginForm.style.display='none'; logoutBtn.style.display=''; adminStatus.style.display=''; }
-  else { loginBtn.style.display=''; loginForm.style.display='none'; logoutBtn.style.display='none'; adminStatus.style.display='none'; }
-}
-
-/* ------------------ Supabase ------------------ */
-// TODO: điền thông tin dự án của bạn
-const SUPABASE_URL = "https://PROJECT_URL.supabase.co"; // <-- Thay PROJECT_URL
-const SUPABASE_ANON_KEY = "ANON_KEY"; // <-- Thay ANON_KEY
+/* ------------------ Supabase (CẤU HÌNH) ------------------ */
+// Thay 2 giá trị dưới bằng của bạn
+const SUPABASE_URL = "https://sdljyvsltpmxtoipsmec.supabase.co"; // <-- Thay PROJECT_URL
+const SUPABASE_ANON_KEY = "sb_publishable_pUC6dZmq23PBkEdZ6qbCcg_GXE7jDYh"; // <-- Thay ANON_KEY
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ------------------ DỮ LIỆU ------------------ */
+/* ------------------ STATE ------------------ */
 let data = [];
 let editIndex = -1;
+let currentSession = null;
+let isAdminFlag = false;
+let realtimeChannel = null;
+
+/* ------------------ AUTH HELPERS ------------------ */
+function applyPermission() {
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdminFlag ? '' : 'none');
+  if (isAdminFlag) {
+    loginBtn.style.display='none';
+    loginForm.style.display='none';
+    logoutBtn.style.display='';
+    adminStatus.style.display='';
+  } else {
+    // if logged in but not admin, still hide admin actions
+    loginBtn.style.display = currentSession ? 'none' : '';
+    loginForm.style.display = 'none';
+    logoutBtn.style.display = currentSession ? '' : 'none';
+    adminStatus.style.display = 'none';
+  }
+}
+
+/* ------------------ Realtime setup ------------------ */
+function setupRealtime() {
+  try {
+    if (realtimeChannel) {
+      supabase.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
+    realtimeChannel = supabase
+      .channel('public:realtime:risk_items')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'risk_items' }, (payload) => {
+        // console.log('Realtime payload:', payload);
+        // simple approach: reload list (for large tables consider patching)
+        loadRisks();
+      })
+      .subscribe((status) => {
+        // console.log('realtime subscribe status', status);
+      });
+  } catch (err) {
+    console.error('Realtime error', err);
+  }
+}
+
+/* ------------------ Auth flow ------------------ */
+async function checkProfileAndApply(session) {
+  currentSession = session;
+  isAdminFlag = false;
+  if (!session || !session.user) {
+    applyPermission();
+    return;
+  }
+  try {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+    if (error) {
+      // if no profile row found, user is not admin
+      isAdminFlag = false;
+    } else {
+      isAdminFlag = profile?.role === 'admin';
+    }
+  } catch (err) {
+    console.error('checkProfile error', err);
+    isAdminFlag = false;
+  }
+  applyPermission();
+}
+
+/* call on page load to capture existing session */
+(async function initAuthAndRealtime() {
+  // get current session
+  try {
+    const { data } = await supabase.auth.getSession();
+    const session = data.session ?? null;
+    await checkProfileAndApply(session);
+  } catch (err) {
+    console.error('getSession error', err);
+  }
+  // listen to auth changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    // session may be null on sign out
+    checkProfileAndApply(session);
+  });
+
+  // setup realtime listener
+  setupRealtime();
+})();
 
 /* ------------------ Load data từ Supabase ------------------ */
 async function loadRisks() {
-  const { data: rows, error } = await supabase
-    .from('risk_items')
-    .select('*')
-    .order('created_at', { ascending: false });
+  try {
+    const { data: rows, error } = await supabase
+      .from('risk_items')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  if (error) { console.error(error); alert('Load dữ liệu lỗi'); return; }
-  data = rows;
-  populateSystems();
-  populateGroups();
-  renderList();
+    if (error) { console.error(error); alert('Load dữ liệu lỗi: ' + error.message); return; }
+    data = rows || [];
+    populateSystems();
+    populateGroups();
+    renderList();
+  } catch (err) {
+    console.error('loadRisks error', err);
+    alert('Load dữ liệu lỗi');
+  }
 }
 
 /* ------------------ Add / Update / Delete ------------------ */
 async function addRisk() {
-  if (!isAdmin()) { alert('Cần quyền Admin'); return; }
+  if (!isAdminFlag) { alert('Cần quyền Admin'); return; }
   const sys = newSystem.value.trim();
   const grp = newGroup.value.trim();
   const title = newTitle.value.trim();
   const cont = newContent.value.trim();
   if (!sys || !grp || !title || !cont) { alert('Vui lòng nhập đầy đủ'); return; }
-  const { error } = await supabase.from('risk_items').insert([{ system: sys, group: grp, title: title, content: cont }]);
+  const { data: inserted, error } = await supabase.from('risk_items').insert([{ system: sys, group: grp, title: title, content: cont }]).select();
   if (error) alert(error.message);
-  else { clearInputs(); loadRisks(); }
+  else { clearInputs(); await loadRisks(); }
 }
 
 async function updateRisk(id) {
+  if (!isAdminFlag) { alert('Cần quyền Admin'); return; }
   const sys = newSystem.value.trim();
   const grp = newGroup.value.trim();
   const title = newTitle.value.trim();
@@ -258,25 +345,28 @@ async function updateRisk(id) {
   if (!sys || !grp || !title || !cont) { alert('Vui lòng nhập đầy đủ'); return; }
   const { error } = await supabase.from('risk_items').update({ system: sys, group: grp, title: title, content: cont }).eq('id', id);
   if (error) alert(error.message);
-  else { clearInputs(); loadRisks(); }
+  else { clearInputs(); await loadRisks(); }
 }
 
 async function deleteRisk(id) {
-  if (!isAdmin()) { alert('Cần quyền Admin'); return; }
+  if (!isAdminFlag) { alert('Cần quyền Admin'); return; }
   if (!confirm('Xác nhận xóa?')) return;
   const { error } = await supabase.from('risk_items').delete().eq('id', id);
   if (error) alert(error.message);
-  else loadRisks();
+  else await loadRisks();
 }
 
 /* ------------------ Các hàm hiển thị ------------------ */
-function getUniqueSystems() { return [...new Set(data.map(d=>d.system))].sort(); }
-function getGroupsFor(sys) { return [...new Set(data.filter(d=>d.system===sys).map(d=>d.group))].sort(); }
+function getUniqueSystems() { return [...new Set(data.map(d=>d.system))].filter(Boolean).sort(); }
+function getGroupsFor(sys) { return [...new Set(data.filter(d=>d.system===sys).map(d=>d.group))].filter(Boolean).sort(); }
 
 function populateSystems() {
   const selected = systemSelect.value;
   systemSelect.innerHTML = '';
-  getUniqueSystems().forEach(s => {
+  const systems = getUniqueSystems();
+  // add placeholder
+  const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='-- Chọn Hệ --'; systemSelect.appendChild(placeholder);
+  systems.forEach(s => {
     const o = document.createElement('option'); o.value=s; o.textContent=s; systemSelect.appendChild(o);
   });
   if (selected && [...systemSelect.options].some(o=>o.value===selected)) systemSelect.value=selected;
@@ -304,7 +394,7 @@ function renderList() {
   listArea.innerHTML='';
   const q=(searchBox.value||'').trim().toLowerCase();
   data.forEach((d,idx)=>{
-    if(q && !(d.title+' '+d.content+' '+d.system+' '+d.group).toLowerCase().includes(q)) return;
+    if(q && !( (d.title||'')+' '+(d.content||'')+' '+(d.system||'')+' '+(d.group||'') ).toLowerCase().includes(q)) return;
     const item=document.createElement('div'); item.className='item';
     const meta=document.createElement('div'); meta.className='meta';
     const h4=document.createElement('h4'); h4.textContent=`${d.title} — ${d.system} / ${d.group}`;
@@ -314,7 +404,7 @@ function renderList() {
     const btnCopy=document.createElement('button'); btnCopy.className='small btn-copy'; btnCopy.textContent='Sao chép';
     btnCopy.onclick=()=>{ navigator.clipboard.writeText(d.content).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); };
     actions.appendChild(btnCopy);
-    if(isAdmin()){
+    if(isAdminFlag){
       const btnEdit=document.createElement('button'); btnEdit.textContent='Sửa'; btnEdit.className='small ghost';
       btnEdit.onclick=()=>{ startEdit(d.id); };
       actions.appendChild(btnEdit);
@@ -334,9 +424,16 @@ function startEdit(id){
   updateButton.style.display='inline-block'; addButton.style.display='none';
 }
 
+function clearInputs(){
+  newSystem.value=''; newGroup.value=''; newTitle.value=''; newContent.value='';
+  editIndex = -1;
+  updateButton.style.display='none'; addButton.style.display='inline-block';
+}
+
+/* ------------------ Event Listeners ------------------ */
 addButton.addEventListener('click', addRisk);
 updateButton.addEventListener('click', ()=>updateRisk(editIndex));
-clearForm.addEventListener('click', ()=>{ newSystem.value=''; newGroup.value=''; newTitle.value=''; newContent.value=''; addButton.style.display='inline-block'; updateButton.style.display='none'; });
+clearForm.addEventListener('click', ()=>{ clearInputs(); });
 
 searchBox.addEventListener('input', renderList);
 systemSelect.addEventListener('change', ()=>{ populateGroups(); });
@@ -345,33 +442,98 @@ groupSelect.addEventListener('change', ()=>{ populateContent(); renderList(); })
 const copyOutputBtn = document.getElementById('copyOutputBtn');
 copyOutputBtn.addEventListener('click', ()=>{ navigator.clipboard.writeText(output.textContent).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); });
 
-loginBtn.addEventListener('click', ()=>{ loginForm.style.display='flex'; loginBtn.style.display='none'; adminPwdInput.focus(); });
-loginConfirmBtn.addEventListener('click', ()=>{
-  if(adminPwdInput.value===ADMIN_PASSWORD){ localStorage.setItem(ADMIN_LS_KEY,'1'); applyPermission(); renderList(); alert('Đăng nhập Admin thành công'); }
-  else alert('Sai mật khẩu');
+loginBtn.addEventListener('click', ()=>{ loginForm.style.display='flex'; loginBtn.style.display='none'; adminEmailInput.focus(); });
+loginConfirmBtn.addEventListener('click', async ()=>{
+  await login();
 });
-logoutBtn.addEventListener('click', ()=>{ localStorage.removeItem(ADMIN_LS_KEY); applyPermission(); renderList(); alert('Đã thoát Admin'); });
+logoutBtn.addEventListener('click', async ()=>{ await logout(); });
 
-exportBtn.addEventListener('click', ()=>{
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='riskData.json'; a.click(); URL.revokeObjectURL(url);
-});
+exportBtn.addEventListener('click', ()=>{ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='riskData.json'; a.click(); URL.revokeObjectURL(url); });
 
 importFile.addEventListener('change',(e)=>{
-  if(!isAdmin()){ alert('Cần quyền Admin'); importFile.value=''; return; }
+  if(!isAdminFlag){ alert('Cần quyền Admin'); importFile.value=''; return; }
   const f=e.target.files[0]; if(!f) return;
   const reader=new FileReader();
-  reader.onload=()=>{ try{ const arr=JSON.parse(reader.result); if(!Array.isArray(arr)) throw new Error('File không đúng định dạng'); if(confirm('Nhập file sẽ thay thế dữ liệu hiện tại?')){ data=arr; populateSystems(); renderList(); alert('Import thành công'); } } catch(err){ alert('Lỗi: '+err.message); } };
+  reader.onload=()=>{ try{ const arr=JSON.parse(reader.result); if(!Array.isArray(arr)) throw new Error('File không đúng định dạng'); if(confirm('Nhập file sẽ thay thế dữ liệu hiện tại?')){ 
+        // bulk upsert or replace — here we'll replace by deleting all then inserting (admin only)
+        (async ()=>{
+          // delete all (careful)
+          const ids = data.map(d=>d.id);
+          if(ids.length){
+            const { error: delErr } = await supabase.from('risk_items').delete().in('id', ids);
+            if(delErr) return alert('Xoá cũ lỗi: '+delErr.message);
+          }
+          // insert new
+          const { error: insErr } = await supabase.from('risk_items').insert(arr);
+          if(insErr) return alert('Import lỗi: '+insErr.message);
+          data = arr;
+          populateSystems(); renderList(); alert('Import thành công');
+        })();
+     } } catch(err){ alert('Lỗi: '+err.message); } };
   reader.readAsText(f);
 });
 
-resetBtn.addEventListener('click', ()=>{
-  if(!isAdmin()) return;
-  if(confirm('Reset về mặc định?')){ data=[]; loadRisks(); }
+resetBtn.addEventListener('click', async ()=>{
+  if(!isAdminFlag) return;
+  if(confirm('Reset về mặc định?')){ 
+    // reset by deleting all rows (admin only)
+    try {
+      const ids = data.map(d=>d.id);
+      if(ids.length){
+        const { error } = await supabase.from('risk_items').delete().in('id', ids);
+        if (error) return alert('Reset lỗi: '+error.message);
+      }
+      data = [];
+      populateSystems(); renderList();
+    } catch (err) {
+      console.error(err);
+      alert('Reset lỗi');
+    }
+  }
 });
 
+/* ------------------ Auth functions ------------------ */
+async function login(){
+  const email = adminEmailInput.value.trim();
+  const password = adminPwdInput.value;
+  if(!email || !password) return alert('Nhập email và mật khẩu');
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    alert('Login lỗi: ' + error.message);
+    // show login form again
+    loginForm.style.display = 'flex';
+    loginBtn.style.display = 'none';
+    return;
+  }
+  // on success, auth state listener will call checkProfileAndApply
+  adminPwdInput.value = '';
+  adminEmailInput.value = '';
+  // refresh data & ui
+  const session = data?.session ?? null;
+  await checkProfileAndApply(session);
+  await loadRisks();
+  alert('Đăng nhập thành công');
+}
+
+async function logout(){
+  try {
+    await supabase.auth.signOut();
+    currentSession = null;
+    isAdminFlag = false;
+    applyPermission();
+    await loadRisks();
+    alert('Đã thoát Admin');
+  } catch (err) {
+    console.error('logout error', err);
+    alert('Thoát lỗi');
+  }
+}
+
 /* ------------------ INITIAL LOAD ------------------ */
-loadRisks();
+(async function init(){
+  applyPermission(); // initial hide admin elements
+  await loadRisks();
+})();
 </script>
 </body>
 </html>
