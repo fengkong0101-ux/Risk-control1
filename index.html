@@ -4,132 +4,247 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Quản lý Rủi ro — Risk Manager</title>
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --accent:#339af0; --accent-dark:#1c7ed6; --bg:#f4f6f8; --card:#fff;
-      --shadow: rgba(18,38,63,0.06); --muted:#667; --maxw:1200px; --border:#d4d9de;
+    :root {
+      --accent-light: rgba(51, 154, 240, 0.2);
+      --maxw: 1200px;
+      --accent: #339af0;
+      --accent-dark: #1c7ed6;
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --shadow: rgba(18,38,63,0.06);
+      --text-muted: #667;
+      --text-primary: #222;
+      --border-color: #d4d9de;
     }
-    *{box-sizing:border-box}
-    body{
-      font-family:Inter,Arial,sans-serif; margin:0; padding:24px; background:var(--bg);
-      display:flex; justify-content:center;
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
     }
-    .wrap{
-      width:100%; max-width:var(--maxw); background:var(--card); border-radius:14px;
-      padding:20px; box-shadow:0 8px 24px var(--shadow);
+
+    .wrap {
+      max-width: var(--maxw);
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 20px var(--shadow);
     }
-    h1{font-size:26px;margin:0;background:linear-gradient(90deg,var(--accent),#74c0fc);
-       -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    p.lead{margin:6px 0 14px;color:var(--muted)}
-    .header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-    .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-    label.muted{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
-    select,input,textarea,button{
-      font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+
+    h1 {
+      font-size: 28px;
+      margin: 0 0 6px;
+      background: linear-gradient(90deg, var(--accent), #74c0fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    input,select{height:40px}
-    textarea{min-height:100px;resize:vertical}
-    input::placeholder{color:#9aa6b2}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent-dark);
-      box-shadow:0 0 0 4px rgba(51,154,240,0.08)}
-    .login-area{display:flex;gap:8px;align-items:center}
-    .login-area input{width:180px}
-    .login-area .small{padding:6px 10px}
-    .panel{padding:16px;border-radius:12px;background:#fbfcff;border:1px solid #eef3fb;margin-bottom:16px}
-    .content{background:#fcfcff;padding:14px;border-radius:10px;border:1px solid #eef3fb;min-height:140px;white-space:pre-line}
-    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-    button{background:var(--accent);color:#fff;border:none;cursor:pointer;border-radius:8px;transition:.16s}
-    button.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent)}
-    button.ghost:hover{background:var(--accent);color:#fff}
-    button.small{font-size:13px;padding:6px 10px}
-    .hint{color:#7a8793;font-size:13px}
-    .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px}
-    .item{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 6px 18px var(--shadow);display:flex;flex-direction:column}
-    .meta h4{margin:0 0 8px;font-size:16px;color:#222}
-    .meta p{margin:0;color:#333;white-space:pre-line}
-    .item .actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
-    .btn-copy{background:transparent;border:1px dashed var(--accent);color:var(--accent)}
-    .btn-delete{background:var(--accent-dark);color:#fff}
-    .admin-indicator{margin-left:8px;color:var(--accent-dark);font-weight:700}
-    @media(max-width:780px){ .row{flex-direction:column} .login-area{width:100%;justify-content:flex-end} .login-area input{width:140px} }
+
+    p.lead {
+      margin: 0 0 14px;
+      color: var(--text-muted);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    select, input, textarea, button {
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      transition: 0.2s;
+    }
+    select, input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+    }
+    select, input { height: 40px; }
+    textarea { resize: vertical; min-height: 100px; }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .content {
+      background: #fcfcff;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #eef3fb;
+      min-height: 140px;
+      white-space: pre-line;
+    }
+
+    .panel {
+      padding: 16px;
+      border-radius: 16px;
+      background: #fdfdff;
+      border: 1px solid #eef3fb;
+      margin-bottom: 16px;
+    }
+
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: 0.18s;
+    }
+
+    button:hover:not(.ghost) { background: var(--accent-dark); }
+    button:active { transform: translateY(1px); }
+
+    button.ghost {
+      background: #fff;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    button.ghost:hover { background: var(--accent); color: #fff; }
+
+    .small { font-size: 13px; padding: 6px 10px; }
+
+    .muted { color: var(--text-muted); font-size: 13px; }
+    .hint { color: #7a8793; font-size: 13px; }
+
+    .flex { display: flex; gap: 8px; align-items: center; }
+    .footer { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    .admin-indicator { margin-left: 10px; color: var(--accent-dark); font-weight: 700; }
+
+    .login-form { display: flex; gap: 8px; align-items: center; }
+    .login-form input { width: 180px; }
+
+    @media (max-width: 780px) {
+      .row { flex-direction: column; }
+      .flex { justify-content: space-between; width: 100%; }
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .item {
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: 0.3s;
+    }
+
+    .item:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(18,38,63,0.08); }
+
+    .meta h4 { margin: 0 0 8px; font-size: 17px; color: var(--text-primary); }
+    .meta p { margin: 0; color: #333; font-size: 14px; line-height: 1.5; word-break: break-word; }
+
+    .item .actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+
+    .btn-copy { background: transparent; border: 1px dashed var(--accent); color: var(--accent); }
+    .btn-copy:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-delete { background: var(--accent-dark); color: #fff; }
+    .btn-delete:hover { filter: brightness(0.9); }
   </style>
+  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div>
-        <h1>Quản lý Rủi ro</h1>
-        <p class="lead">Chọn Hệ → Nhóm lỗi. Thêm / Sửa / Xóa / Xuất / Nhập dữ liệu</p>
-      </div>
-
-      <div style="text-align:right">
-        <div class="login-area" id="loginArea">
-          <input id="adminEmailInput" type="email" placeholder="Email Admin" autocomplete="username">
-          <input id="adminPwdInput" type="password" placeholder="Mật khẩu Admin" autocomplete="current-password">
-          <button id="loginConfirmBtn" type="button" class="small ghost">Login</button>
-          <button id="logoutBtn" type="button" class="small ghost" style="display:none">Logout</button>
-          <span id="adminStatus" class="admin-indicator" style="display:none">ADMIN</span>
+<div class="wrap">
+  <div style="display:flex; justify-content: space-between; align-items:center; gap:12px;">
+    <div>
+      <h1>Quản lý Rủi ro</h1>
+      <p class="lead">Chọn Hệ → Nhóm lỗi. Thêm / Sửa / Xóa / Xuất / Nhập dữ liệu</p>
+    </div>
+    <div style="text-align:right;">
+      <div style="margin-bottom: 8px;">
+        <button id="loginBtn" class="small ghost">Đăng nhập Admin</button>
+        <div id="loginForm" class="login-form" style="display:none;">
+          <input id="adminEmailInput" type="email" placeholder="Email Admin">
+          <input id="adminPwdInput" type="password" placeholder="Mật khẩu Admin">
+          <button id="loginConfirmBtn" class="small ghost">OK</button>
         </div>
-        <div class="hint" style="margin-top:6px">Admin: có quyền sửa (đăng nhập bằng tài khoản Supabase)</div>
+        <button id="logoutBtn" class="small ghost" style="display:none;">Thoát Admin</button>
+        <span id="adminStatus" class="admin-indicator" style="display:none;">ADMIN</span>
       </div>
+      <div class="hint">Admin: có quyền sửa</div>
     </div>
-
-    <div class="row" style="margin-top:12px">
-      <div style="flex:1;min-width:220px">
-        <label class="muted">Chọn Hệ</label>
-        <select id="systemSelect"></select>
-      </div>
-      <div style="flex:1;min-width:220px">
-        <label class="muted">Chọn Nhóm lỗi</label>
-        <select id="groupSelect"></select>
-      </div>
-      <div style="min-width:160px">
-        <label class="muted">Tìm (tiêu đề / nội dung)</label>
-        <input id="searchBox" placeholder="Gõ từ khóa...">
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="row">
-        <div style="flex:1">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div class="muted">Kết quả</div>
-            <button id="copyOutputBtn" type="button" class="small ghost">Sao chép</button>
-          </div>
-          <div id="output" class="content">Chọn Hệ và Nhóm lỗi để xem nội dung</div>
-        </div>
-
-        <div style="width:320px">
-          <div class="muted">Thêm / Sửa mục</div>
-          <input id="newSystem" placeholder="Hệ (vd: RUMMY)">
-          <input id="newGroup" placeholder="Nhóm lỗi (vd: TRÙNG IP)">
-          <input id="newTitle" placeholder="Tiêu đề (vd: RUMMY TRÙNG IP)">
-          <textarea id="newContent" rows="6" placeholder="Nội dung chi tiết..."></textarea>
-          <div class="controls">
-            <button id="addButton" type="button" class="small admin-only">ADD</button>
-            <button id="updateButton" type="button" class="small ghost admin-only" style="display:none">UPDATE</button>
-            <button id="clearForm" type="button" class="small">CLEAR</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer" style="align-items:center">
-      <button id="exportBtn" type="button" class="small">Export JSON</button>
-      <label class="file-input small ghost admin-only" style="cursor:pointer;padding:6px 10px;border-radius:8px">
-        Import JSON <input id="importFile" type="file" accept="application/json" style="display:none">
-      </label>
-      <button id="resetBtn" type="button" class="small ghost admin-only">Reset to default</button>
-      <div class="hint" style="margin-left:8px">Dữ liệu được tải từ Supabase. Export để chia sẻ (JSON).</div>
-    </div>
-
-    <div class="list" id="listArea"></div>
   </div>
 
+  <div class="row">
+    <div style="flex:1; min-width:220px;">
+      <label class="muted">Chọn Hệ</label>
+      <select id="systemSelect"></select>
+    </div>
+    <div style="flex:1; min-width:220px;">
+      <label class="muted">Chọn Nhóm lỗi</label>
+      <select id="groupSelect"></select>
+    </div>
+    <div style="min-width:160px;">
+      <label class="muted">Tìm (tiêu đề / nội dung)</label>
+      <input id="searchBox" class="search" placeholder="Gõ từ khóa...">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div style="flex:1;">
+        <div class="flex" style="justify-content:space-between;">
+          <div class="muted">Kết quả</div>
+          <button id="copyOutputBtn" class="small ghost">Sao chép</button>
+        </div>
+        <div id="output" class="content">Chọn Hệ để xem nội dung</div>
+      </div>
+      <div style="width:320px;">
+        <div class="muted">Thêm / Sửa mục</div>
+        <input id="newSystem" placeholder="Hệ (vd: RUMMY)" />
+        <input id="newGroup" placeholder="Nhóm lỗi (vd: TRÙNG IP)" />
+        <input id="newTitle" placeholder="Tiêu đề (vd: RUMMY TRÙNG IP)" />
+        <textarea id="newContent" rows="6" placeholder="Nội dung chi tiết..."></textarea>
+        <div class="controls">
+          <button id="addButton" class="small admin-only">ADD</button>
+          <button id="updateButton" class="small ghost admin-only" style="display:none;">UPDATE</button>
+          <button id="clearForm" class="small">CLEAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button id="exportBtn" class="small">Export JSON</button>
+    <label class="file-input small ghost admin-only" style="cursor:pointer;">
+      Import JSON <input id="importFile" type="file" accept="application/json" style="display:none;">
+    </label>
+    <button id="resetBtn" class="small ghost admin-only">Reset to default</button>
+    <div class="hint">Dữ liệu từ Supabase. Export để chia sẻ (JSON).</div>
+  </div>
+
+  <div class="list" id="listArea"></div>
+</div>
+
 <script>
-/* ---------------- DOM refs ---------------- */
 const systemSelect = document.getElementById('systemSelect');
 const groupSelect = document.getElementById('groupSelect');
 const output = document.getElementById('output');
@@ -148,145 +263,123 @@ const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
 const resetBtn = document.getElementById('resetBtn');
 
-const loginArea = document.getElementById('loginArea');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const adminStatus = document.getElementById('adminStatus');
+const loginForm = document.getElementById('loginForm');
 const adminEmailInput = document.getElementById('adminEmailInput');
 const adminPwdInput = document.getElementById('adminPwdInput');
 const loginConfirmBtn = document.getElementById('loginConfirmBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const adminStatus = document.getElementById('adminStatus');
 
-const copyOutputBtn = document.getElementById('copyOutputBtn');
-
-/* ---------------- Supabase config ---------------- */
+/* Supabase config */
 const SUPABASE_URL = "https://sdljyvsltpmxtoipsmec.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_pUC6dZmq23PBkEdZ6qbCcg_GXE7jDYh";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = supabase.createClient(https://sdljyvsltpmxtoipsmec.supabase.co, sb_publishable_pUC6dZmq23PBkEdZ6qbCcg_GXE7jDYh);
 
-/* ---------------- State ---------------- */
-let data = [];
-let editIndex = -1;
-let currentSession = null;
-let isAdminFlag = false;
+let data = [], editIndex = -1, currentSession=null, isAdminFlag=false;
 
-/* ---------------- Helpers ---------------- */
-function applyPermission() {
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdminFlag ? '' : 'none');
-  // if admin -> hide login area, show logout/admin label
-  loginArea.style.display = isAdminFlag ? 'none' : 'flex';
-  logoutBtn.style.display = isAdminFlag ? 'inline-block' : 'none';
-  adminStatus.style.display = isAdminFlag ? 'inline-block' : 'none';
+function applyPermission(){
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdminFlag?'':'none');
+  loginBtn.style.display = isAdminFlag?'none':'';
+  loginForm.style.display = 'none';
+  logoutBtn.style.display = isAdminFlag?'':'none';
+  adminStatus.style.display = isAdminFlag?'':'none';
 }
 
-/* ---------------- Auth check ---------------- */
-async function checkProfileAndApply(session) {
+async function checkProfileAndApply(session){
   currentSession = session;
   isAdminFlag = false;
-  if (!session || !session.user) { applyPermission(); return; }
-  try {
-    const { data: profile, error } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
-    if (!error && profile?.role === 'admin') isAdminFlag = true;
-  } catch (e) {
-    console.error('checkProfile error', e);
-    isAdminFlag = false;
-  }
+  if(!session || !session.user){ applyPermission(); return; }
+  try{
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id',session.user.id).single();
+    isAdminFlag = profile?.role==='admin';
+  }catch(e){ isAdminFlag=false; }
   applyPermission();
 }
 
-/* ---------------- Init auth listener ---------------- */
-(async function initAuth() {
-  try {
+(async function initAuth(){
+  try{
     const { data } = await supabase.auth.getSession();
     await checkProfileAndApply(data.session ?? null);
-  } catch (e) { console.error('getSession failed', e); }
-  supabase.auth.onAuthStateChange((event, session) => {
-    checkProfileAndApply(session);
-  });
+  }catch(e){}
+  supabase.auth.onAuthStateChange((event,session)=>{ checkProfileAndApply(session); });
 })();
 
-/* ---------------- Load data ---------------- */
 async function loadRisks(){
   try{
-    const { data: rows, error } = await supabase.from('risk_items').select('*').order('created_at', { ascending: false });
-    if (error) { console.error(error); alert('Load lỗi: ' + error.message); return; }
-    data = rows || [];
-    populateSystems();
-    populateGroups();
-    renderList();
+    const { data: rows, error } = await supabase.from('risk_items').select('*').order('created_at',{ascending:false});
+    if(error) return alert('Load lỗi: '+error.message);
+    data = rows||[];
+    populateSystems(); populateGroups(); renderList();
   }catch(e){ console.error(e); alert('Load lỗi'); }
 }
 
-/* ---------------- CRUD ---------------- */
-async function addRisk(){
-  if (!isAdminFlag) return alert('Cần quyền Admin');
-  const sys = newSystem.value.trim(), grp = newGroup.value.trim(), title = newTitle.value.trim(), cont = newContent.value.trim();
-  if (!sys || !grp || !title || !cont) return alert('Nhập đầy đủ');
-  const { error } = await supabase.from('risk_items').insert([{ system: sys, group: grp, title, content: cont }]);
-  if (error) alert(error.message); else { clearInputs(); await loadRisks(); }
+/* Add/Update/Delete */
+async function addRisk(){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
+  const sys=newSystem.value.trim(), grp=newGroup.value.trim(), title=newTitle.value.trim(), cont=newContent.value.trim();
+  if(!sys||!grp||!title||!cont){ alert('Nhập đầy đủ'); return; }
+  const { error } = await supabase.from('risk_items').insert([{ system:sys, group:grp, title, content:cont }]);
+  if(error) alert(error.message); else{ clearInputs(); await loadRisks(); }
 }
 
-async function updateRisk(id){
-  if (!isAdminFlag) return alert('Cần quyền Admin');
-  const sys = newSystem.value.trim(), grp = newGroup.value.trim(), title = newTitle.value.trim(), cont = newContent.value.trim();
-  if (!sys || !grp || !title || !cont) return alert('Nhập đầy đủ');
-  const { error } = await supabase.from('risk_items').update({ system: sys, group: grp, title, content: cont }).eq('id', id);
-  if (error) alert(error.message); else { clearInputs(); await loadRisks(); }
+async function updateRisk(id){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
+  const sys=newSystem.value.trim(), grp=newGroup.value.trim(), title=newTitle.value.trim(), cont=newContent.value.trim();
+  if(!sys||!grp||!title||!cont){ alert('Nhập đầy đủ'); return; }
+  const { error } = await supabase.from('risk_items').update({ system:sys, group:grp, title, content:cont }).eq('id',id);
+  if(error) alert(error.message); else{ clearInputs(); await loadRisks(); }
 }
 
-async function deleteRisk(id){
-  if (!isAdminFlag) return alert('Cần quyền Admin');
-  if (!confirm('Xác nhận xóa?')) return;
-  const { error } = await supabase.from('risk_items').delete().eq('id', id);
-  if (error) alert(error.message); else await loadRisks();
+async function deleteRisk(id){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
+  if(!confirm('Xác nhận xóa?')) return;
+  const { error } = await supabase.from('risk_items').delete().eq('id',id);
+  if(error) alert(error.message); else await loadRisks();
 }
 
-/* ---------------- UI helpers ---------------- */
+/* Render & helpers */
 function getUniqueSystems(){ return [...new Set(data.map(d=>d.system))].filter(Boolean).sort(); }
 function getGroupsFor(sys){ return [...new Set(data.filter(d=>d.system===sys).map(d=>d.group))].filter(Boolean).sort(); }
 
 function populateSystems(){
   const selected = systemSelect.value;
   systemSelect.innerHTML = '';
-  const ph = document.createElement('option'); ph.value=''; ph.textContent='-- Chọn Hệ --'; systemSelect.appendChild(ph);
-  getUniqueSystems().forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; systemSelect.appendChild(o); });
-  if (selected && [...systemSelect.options].some(o=>o.value===selected)) systemSelect.value = selected;
+  const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='-- Chọn Hệ --'; systemSelect.appendChild(placeholder);
+  getUniqueSystems().forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; systemSelect.appendChild(o); });
+  if(selected && [...systemSelect.options].some(o=>o.value===selected)) systemSelect.value=selected;
   populateGroups();
 }
 
 function populateGroups(){
-  const sys = systemSelect.value;
-  groupSelect.innerHTML = '';
-  const allOpt = document.createElement('option'); allOpt.value=''; allOpt.textContent='Tất cả nhóm'; groupSelect.appendChild(allOpt);
-  if (sys) getGroupsFor(sys).forEach(g => { const o = document.createElement('option'); o.value=g; o.textContent=g; groupSelect.appendChild(o); });
-  populateContent();
-  renderList();
+  const sys=systemSelect.value;
+  groupSelect.innerHTML='';
+  const allOpt=document.createElement('option'); allOpt.value=''; allOpt.textContent='Tất cả nhóm'; groupSelect.appendChild(allOpt);
+  if(sys) getGroupsFor(sys).forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; groupSelect.appendChild(o); });
+  populateContent(); renderList();
 }
 
 function populateContent(){
-  const sys = systemSelect.value, grp = groupSelect.value;
-  if (!sys) { output.textContent = 'Chọn Hệ để xem nội dung'; return; }
-  const items = !grp ? data.filter(d => d.system === sys) : data.filter(d => d.system === sys && d.group === grp);
-  output.textContent = items.length ? items.map(i => `Tiêu đề: ${i.title}\n${i.content}`).join('\n\n') : 'Không có dữ liệu';
+  const sys=systemSelect.value, grp=groupSelect.value;
+  if(!sys){ output.textContent='Chọn Hệ để xem nội dung'; return; }
+  const items = !grp?data.filter(d=>d.system===sys):data.filter(d=>d.system===sys && d.group===grp);
+  output.textContent = items.length?items.map(i=>`Tiêu đề: ${i.title}\\n${i.content}`).join('\\n\\n'):'Không có dữ liệu';
 }
 
 function renderList(){
-  listArea.innerHTML = '';
-  const q = (searchBox.value || '').trim().toLowerCase();
-  data.forEach(d => {
-    if (q && !((d.title||'')+' '+(d.content||'')+' '+(d.system||'')+' '+(d.group||'')).toLowerCase().includes(q)) return;
-    const item = document.createElement('div'); item.className='item';
-    const meta = document.createElement('div'); meta.className='meta';
-    const h4 = document.createElement('h4'); h4.textContent = `${d.title} — ${d.system} / ${d.group}`;
-    const p = document.createElement('p'); p.textContent = d.content;
+  listArea.innerHTML='';
+  const q=(searchBox.value||'').trim().toLowerCase();
+  data.forEach(d=>{
+    if(q && !( (d.title||'')+' '+(d.content||'')+' '+(d.system||'')+' '+(d.group||'') ).toLowerCase().includes(q)) return;
+    const item=document.createElement('div'); item.className='item';
+    const meta=document.createElement('div'); meta.className='meta';
+    const h4=document.createElement('h4'); h4.textContent=`${d.title} — ${d.system} / ${d.group}`;
+    const p=document.createElement('p'); p.textContent=d.content;
     meta.appendChild(h4); meta.appendChild(p);
-    const actions = document.createElement('div'); actions.className='actions';
-    const btnCopy = document.createElement('button'); btnCopy.type='button'; btnCopy.className='small btn-copy'; btnCopy.textContent='Sao chép';
-    btnCopy.onclick = () => { navigator.clipboard.writeText(d.content).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); };
+    const actions=document.createElement('div'); actions.className='actions';
+    const btnCopy=document.createElement('button'); btnCopy.className='small btn-copy'; btnCopy.textContent='Sao chép';
+    btnCopy.onclick=()=>{ navigator.clipboard.writeText(d.content).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); };
     actions.appendChild(btnCopy);
-    if (isAdminFlag) {
-      const btnEdit = document.createElement('button'); btnEdit.type='button'; btnEdit.className='small ghost'; btnEdit.textContent='Sửa';
-      btnEdit.onclick = () => startEdit(d.id);
-      const btnDel = document.createElement('button'); btnDel.type='button'; btnDel.className='small btn-delete'; btnDel.textContent='Xóa';
-      btnDel.onclick = () => deleteRisk(d.id);
+    if(isAdminFlag){
+      const btnEdit=document.createElement('button'); btnEdit.className='small ghost'; btnEdit.textContent='Sửa'; btnEdit.onclick=()=>startEdit(d.id);
+      const btnDel=document.createElement('button'); btnDel.className='small btn-delete'; btnDel.textContent='Xóa'; btnDel.onclick=()=>deleteRisk(d.id);
       actions.appendChild(btnEdit); actions.appendChild(btnDel);
     }
     item.appendChild(meta); item.appendChild(actions); listArea.appendChild(item);
@@ -295,98 +388,87 @@ function renderList(){
 
 function startEdit(id){
   const d = data.find(r=>r.id===id);
-  if(!d) return alert('Không tìm thấy dữ liệu');
-  editIndex = id;
-  newSystem.value = d.system; newGroup.value = d.group; newTitle.value = d.title; newContent.value = d.content;
-  updateButton.style.display = 'inline-block'; addButton.style.display = 'none';
+  if(!d){ alert('Không tìm thấy dữ liệu'); return; }
+  editIndex=id;
+  newSystem.value=d.system; newGroup.value=d.group; newTitle.value=d.title; newContent.value=d.content;
+  updateButton.style.display='inline-block'; addButton.style.display='none';
 }
 
 function clearInputs(){
   newSystem.value=''; newGroup.value=''; newTitle.value=''; newContent.value='';
-  editIndex = -1;
-  updateButton.style.display = 'none'; addButton.style.display = 'inline-block';
+  editIndex=-1;
+  updateButton.style.display='none'; addButton.style.display='inline-block';
 }
 
-/* ---------------- Events ---------------- */
+/* Event listeners */
 addButton.addEventListener('click', addRisk);
-updateButton.addEventListener('click', ()=> updateRisk(editIndex));
+updateButton.addEventListener('click', ()=>updateRisk(editIndex));
 clearForm.addEventListener('click', clearInputs);
-
 searchBox.addEventListener('input', renderList);
-systemSelect.addEventListener('change', ()=>{ populateGroups(); });
+systemSelect.addEventListener('change', populateGroups);
 groupSelect.addEventListener('change', ()=>{ populateContent(); renderList(); });
 
-copyOutputBtn.addEventListener('click', ()=>{ navigator.clipboard.writeText(output.textContent).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); });
+document.getElementById('copyOutputBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(output.textContent).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); });
 
-exportBtn.addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download='riskData.json'; a.click(); URL.revokeObjectURL(url); });
+loginBtn.addEventListener('click', ()=>{ loginForm.style.display='flex'; loginBtn.style.display='none'; adminEmailInput.focus(); });
+loginConfirmBtn.addEventListener('click', async ()=>{ await login(); });
+logoutBtn.addEventListener('click', async ()=>{ await logout(); });
+
+exportBtn.addEventListener('click', ()=>{ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='riskData.json'; a.click(); URL.revokeObjectURL(url); });
 
 importFile.addEventListener('change', (e)=>{
-  if (!isAdminFlag) { alert('Cần quyền Admin'); importFile.value = ''; return; }
-  const f = e.target.files[0]; if(!f) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const arr = JSON.parse(reader.result);
-      if(!Array.isArray(arr)) throw new Error('File không đúng định dạng');
-      if(!confirm('Nhập file sẽ thay thế dữ liệu hiện tại?')) return;
-      (async ()=>{
-        const ids = data.map(d=>d.id);
-        if(ids.length){
-          const { error: delErr } = await supabase.from('risk_items').delete().in('id', ids);
-          if(delErr) return alert('Xoá cũ lỗi: '+delErr.message);
-        }
-        const { error: insErr } = await supabase.from('risk_items').insert(arr);
-        if(insErr) return alert('Import lỗi: '+insErr.message);
-        data = arr;
-        populateSystems(); renderList(); alert('Import thành công');
-      })();
-    }catch(err){ alert('Lỗi: '+err.message); }
-  };
-  reader.readAsText(f);
+  if(!isAdminFlag){ alert('Cần quyền Admin'); importFile.value=''; return; }
+  const f=e.target.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ try{ const arr=JSON.parse(reader.result); if(!Array.isArray(arr)) throw new Error('File không đúng định dạng'); if(confirm('Nhập file sẽ thay thế dữ liệu hiện tại?')){ (async()=>{
+    const ids = data.map(d=>d.id);
+    if(ids.length){ const { error } = await supabase.from('risk_items').delete().in('id',ids); if(error) return alert('Xoá cũ lỗi:'+error.message); }
+    const { error: insErr } = await supabase.from('risk_items').insert(arr); if(insErr) return alert('Import lỗi:'+insErr.message);
+    data = arr; populateSystems(); renderList(); alert('Import thành công');
+  })(); }}catch(err){ alert('Lỗi: '+err.message); }}; reader.readAsText(f);
 });
 
 resetBtn.addEventListener('click', async ()=>{
   if(!isAdminFlag) return;
-  if(!confirm('Reset về mặc định?')) return;
-  try{
-    const ids = data.map(d=>d.id);
-    if(ids.length){
-      const { error } = await supabase.from('risk_items').delete().in('id', ids);
-      if (error) return alert('Reset lỗi: '+error.message);
-    }
-    data = []; populateSystems(); renderList();
-  }catch(e){ console.error(e); alert('Reset lỗi'); }
+  if(confirm('Reset về mặc định?')){
+    try{
+      const ids = data.map(d=>d.id);
+      if(ids.length){ const { error } = await supabase.from('risk_items').delete().in('id',ids); if(error) return alert('Reset lỗi:'+error.message); }
+      data=[]; populateSystems(); renderList();
+    }catch(err){ console.error(err); alert('Reset lỗi'); }
+  }
 });
 
-/* ---------------- Auth actions ---------------- */
-loginConfirmBtn.addEventListener('click', async ()=>{
-  const email = adminEmailInput.value.trim();
-  const password = adminPwdInput.value;
-  if(!email || !password) return alert('Nhập email và mật khẩu');
-  try{
-    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
-    if(error) { alert('Login lỗi: ' + error.message); return; }
-    // authData.session contains session
-    adminEmailInput.value = ''; adminPwdInput.value = '';
-    await checkProfileAndApply(authData.session ?? null);
-    await loadRisks();
-    if (isAdminFlag) alert('Đăng nhập thành công (admin)'); else alert('Đăng nhập thành công nhưng không phải admin');
-  }catch(e){ console.error(e); alert('Login lỗi'); }
-});
+/* Auth */
+async function login(){
+  const email = adminEmailInput.value.trim(), password = adminPwdInput.value;
+  if(!email||!password) return alert('Nhập email và mật khẩu');
+  // Sử dụng signInWithPassword để đăng nhập
+  const { data: authResponse, error } = await supabase.auth.signInWithPassword({ email,password });
+  if(error){
+    alert('Login lỗi: '+error.message);
+    loginForm.style.display='flex';
+    loginBtn.style.display='none';
+    return;
+  }
+  adminEmailInput.value=''; adminPwdInput.value='';
+  // Kiểm tra và áp dụng quyền dựa trên session vừa nhận được
+  await checkProfileAndApply(authResponse?.session ?? null);
+  await loadRisks();
+  alert('Đăng nhập thành công');
+}
 
-logoutBtn.addEventListener('click', async ()=>{
+async function logout(){
   try{
     await supabase.auth.signOut();
-    currentSession = null; isAdminFlag = false; applyPermission(); await loadRisks();
-    alert('Đã Logout');
-  }catch(e){ console.error(e); alert('Logout lỗi'); }
-});
+    currentSession=null; isAdminFlag=false; applyPermission(); await loadRisks();
+    alert('Đã thoát Admin');
+  }
+  catch(e){ console.error(e); alert('Thoát lỗi'); }
+}
 
-/* ---------------- Init load ---------------- */
-(async function init(){
-  applyPermission(); // hide admin-only initially
-  await loadRisks();
-})();
+/* Init */
+(async function(){ applyPermission(); await loadRisks(); })();
 </script>
 </body>
 </html>
