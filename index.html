@@ -8,9 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      --accent-light: rgba(51, 154, 240, 0.2);
       --maxw: 1200px;
-      --accent: #e03131;
-      --accent-dark: #a30000;
+      --accent: #339af0;
+      --accent-dark: #1c7ed6;
       --bg: #f4f6f8;
       --card-bg: #ffffff;
       --shadow: rgba(18,38,63,0.06);
@@ -40,7 +41,7 @@
     h1 {
       font-size: 28px;
       margin: 0 0 6px;
-      background: linear-gradient(90deg, var(--accent), #ff6b6b);
+      background: linear-gradient(90deg, var(--accent), #74c0fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -64,14 +65,21 @@
       border: 1px solid var(--border-color);
       transition: 0.2s;
     }
-
+    select, input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+    }
     select, input { height: 40px; }
     textarea { resize: vertical; min-height: 100px; }
 
     select:focus, input:focus, textarea:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(224,49,49,0.12);
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 3px var(--accent-light);
     }
 
     .content {
@@ -145,7 +153,7 @@
       box-shadow: 0 4px 14px var(--shadow);
       display: flex;
       flex-direction: column;
-      transition: 0.18s;
+      transition: 0.3s;
     }
 
     .item:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(18,38,63,0.08); }
@@ -207,7 +215,7 @@
           <div class="muted">Kết quả</div>
           <button id="copyOutputBtn" class="small ghost">Sao chép</button>
         </div>
-        <div id="output" class="content">Chọn Hệ và Nhóm lỗi để xem nội dung</div>
+        <div id="output" class="content">Chọn Hệ để xem nội dung</div>
       </div>
       <div style="width:320px;">
         <div class="muted">Thêm / Sửa mục</div>
@@ -352,7 +360,7 @@ function populateContent(){
   const sys=systemSelect.value, grp=groupSelect.value;
   if(!sys){ output.textContent='Chọn Hệ để xem nội dung'; return; }
   const items = !grp?data.filter(d=>d.system===sys):data.filter(d=>d.system===sys && d.group===grp);
-  output.textContent = items.length?items.map(i=>`Tiêu đề: ${i.title}\n${i.content}`).join('\n\n'):'Không có dữ liệu';
+  output.textContent = items.length?items.map(i=>`Tiêu đề: ${i.title}\\n${i.content}`).join('\\n\\n'):'Không có dữ liệu';
 }
 
 function renderList(){
@@ -417,8 +425,7 @@ importFile.addEventListener('change', (e)=>{
     if(ids.length){ const { error } = await supabase.from('risk_items').delete().in('id',ids); if(error) return alert('Xoá cũ lỗi:'+error.message); }
     const { error: insErr } = await supabase.from('risk_items').insert(arr); if(insErr) return alert('Import lỗi:'+insErr.message);
     data = arr; populateSystems(); renderList(); alert('Import thành công');
-  })(); }}catch(err){ alert('Lỗi: '+err.message); }};
-  reader.readAsText(f);
+  })(); }}catch(err){ alert('Lỗi: '+err.message); }}; reader.readAsText(f);
 });
 
 resetBtn.addEventListener('click', async ()=>{
@@ -452,7 +459,11 @@ async function login(){
 }
 
 async function logout(){
-  try{ await supabase.auth.signOut(); currentSession=null; isAdminFlag=false; applyPermission(); await loadRisks(); alert('Đã thoát Admin'); }
+  try{
+    await supabase.auth.signOut();
+    currentSession=null; isAdminFlag=false; applyPermission(); await loadRisks();
+    alert('Đã thoát Admin');
+  }
   catch(e){ console.error(e); alert('Thoát lỗi'); }
 }
 
