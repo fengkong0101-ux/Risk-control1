@@ -297,7 +297,6 @@ async function checkProfileAndApply(session){
   supabase.auth.onAuthStateChange((event,session)=>{ checkProfileAndApply(session); });
 })();
 
-/* Load risks */
 async function loadRisks(){
   try{
     const { data: rows, error } = await supabase.from('risk_items').select('*').order('created_at',{ascending:false});
@@ -437,10 +436,17 @@ resetBtn.addEventListener('click', async ()=>{
 async function login(){
   const email = adminEmailInput.value.trim(), password = adminPwdInput.value;
   if(!email||!password) return alert('Nhập email và mật khẩu');
-  const { data, error } = await supabase.auth.signInWithPassword({ email,password });
-  if(error){ alert('Login lỗi: '+error.message); loginForm.style.display='flex'; loginBtn.style.display='none'; return; }
+  // Sử dụng signInWithPassword để đăng nhập
+  const { data: authResponse, error } = await supabase.auth.signInWithPassword({ email,password });
+  if(error){
+    alert('Login lỗi: '+error.message);
+    loginForm.style.display='flex';
+    loginBtn.style.display='none';
+    return;
+  }
   adminEmailInput.value=''; adminPwdInput.value='';
-  await checkProfileAndApply(data?.session ?? null);
+  // Kiểm tra và áp dụng quyền dựa trên session vừa nhận được
+  await checkProfileAndApply(authResponse?.session ?? null);
   await loadRisks();
   alert('Đăng nhập thành công');
 }
