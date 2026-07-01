@@ -1,474 +1,1902 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Quản lý Rủi ro — Risk Manager</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent-light: rgba(51, 154, 240, 0.2);
-      --maxw: 1200px;
-      --accent: #339af0;
-      --accent-dark: #1c7ed6;
       --bg: #f4f6f8;
-      --card-bg: #ffffff;
-      --shadow: rgba(18,38,63,0.06);
-      --text-muted: #667;
-      --text-primary: #222;
-      --border-color: #d4d9de;
+      --bg-soft: #ffffff;
+      --panel: rgba(255, 255, 255, 0.92);
+      --panel-2: rgba(255, 247, 237, 0.98);
+      --text: #17202a;
+      --muted: #667085;
+      --border: #e5d7c6;
+      --border-2: #d8c2a8;
+      --accent: #b45309;
+      --accent-2: #9a3412;
+      --accent-soft: rgba(245, 158, 11, 0.09);
+      --card-bg: #fff7ed;
+      --block-bg: #ffedd5;
+      --shadow: 0 10px 28px rgba(16, 24, 40, 0.08);
+      --shadow-strong: 0 14px 36px rgba(16, 24, 40, 0.12);
+      --maxw: 1220px;
     }
 
+    [data-theme="dark"] {
+      --bg: #111318;
+      --bg-soft: #171b22;
+      --panel: rgba(20, 24, 31, 0.92);
+      --panel-2: rgba(27, 31, 39, 0.98);
+      --text: #e8ecf2;
+      --muted: #aab2bf;
+      --border: #2a3340;
+      --border-2: #384354;
+      --accent: #f59e0b;
+      --accent-2: #f97316;
+      --accent-soft: rgba(245, 158, 11, 0.11);
+      --card-bg: #1b2028;
+      --block-bg: #202734;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.30);
+      --shadow-strong: 0 14px 36px rgba(0, 0, 0, 0.40);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+
     body {
-      font-family: 'Inter', Arial, sans-serif;
       margin: 0;
       padding: 24px;
-      background: var(--bg);
       display: flex;
       justify-content: center;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, var(--accent-soft), transparent 32%),
+        linear-gradient(180deg, var(--bg), var(--bg));
+      transition: background 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
     }
 
     .wrap {
-      max-width: var(--maxw);
+      position: relative;
       width: 100%;
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 20px var(--shadow);
+      max-width: var(--maxw);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeUp 0.35s ease both;
+    }
+
+    .wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, rgba(245, 158, 11, 0.14), transparent 70%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
     }
 
     h1 {
-      font-size: 28px;
-      margin: 0 0 6px;
-      background: linear-gradient(90deg, var(--accent), #74c0fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      margin: 0 0 8px;
+      font-size: clamp(26px, 3vw, 34px);
+      letter-spacing: -0.2px;
+      color: var(--accent);
+      transition: color 0.25s ease;
     }
 
-    p.lead {
-      margin: 0 0 14px;
-      color: var(--text-muted);
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 860px;
     }
 
-    .row {
+    .controls-top {
       display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .theme-toggle,
+    .tab-btn,
+    .global-btn {
+      border: 1px solid var(--border-2);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .theme-toggle:hover,
+    .tab-btn:hover,
+    .global-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0 14px;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      align-items: end;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    select, input {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.25s ease, color 0.25s ease;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(245, 158, 11, 0.16);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .panel {
+      margin-top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      min-width: 0;
+    }
+
+    .results-head,
+    .sticky-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 14px;
     }
 
-    select, input, textarea, button {
+    .results-title,
+    .sticky-title {
       font-size: 14px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      transition: 0.2s;
-    }
-    select, input, textarea {
-      width: 100%;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
-    input::placeholder, textarea::placeholder {
-      color: var(--text-muted);
-    }
-    select, input { height: 40px; }
-    textarea { resize: vertical; min-height: 100px; }
-
-    select:focus, input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent-dark);
-      box-shadow: 0 0 0 3px var(--accent-light);
+      color: var(--muted);
     }
 
-    .content {
-      background: #fcfcff;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #eef3fb;
-      min-height: 140px;
-      white-space: pre-line;
-    }
-
-    .panel {
-      padding: 16px;
-      border-radius: 16px;
-      background: #fdfdff;
-      border: 1px solid #eef3fb;
-      margin-bottom: 16px;
-    }
-
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-
-    button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: 0.18s;
-    }
-
-    button:hover:not(.ghost) { background: var(--accent-dark); }
-    button:active { transform: translateY(1px); }
-
-    button.ghost {
-      background: #fff;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-    }
-
-    button.ghost:hover { background: var(--accent); color: #fff; }
-
-    .small { font-size: 13px; padding: 6px 10px; }
-
-    .muted { color: var(--text-muted); font-size: 13px; }
-    .hint { color: #7a8793; font-size: 13px; }
-
-    .flex { display: flex; gap: 8px; align-items: center; }
-    .footer { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-
-    .admin-indicator { margin-left: 10px; color: var(--accent-dark); font-weight: 700; }
-
-    .login-form { display: flex; gap: 8px; align-items: center; }
-    .login-form input { width: 180px; }
-
-    @media (max-width: 780px) {
-      .row { flex-direction: column; }
-      .flex { justify-content: space-between; width: 100%; }
-    }
-
-    .list {
+    .layout {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: minmax(0, 1fr) var(--sidebar-w, 320px);
       gap: 16px;
+      align-items: start;
       margin-top: 16px;
     }
 
-    .item {
-      background: var(--card-bg);
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 4px 14px var(--shadow);
-      display: flex;
-      flex-direction: column;
-      transition: 0.3s;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
 
-    .item:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(18,38,63,0.08); }
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--card-bg);
+      border: 1px solid #f0d7bc;
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: cardIn 0.38s ease forwards;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.25s ease;
+    }
 
-    .meta h4 { margin: 0 0 8px; font-size: 17px; color: var(--text-primary); }
-    .meta p { margin: 0; color: #333; font-size: 14px; line-height: 1.5; word-break: break-word; }
+    [data-theme="dark"] .card { border-color: #303844; }
 
-    .item .actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-strong);
+      border-color: var(--border-2);
+    }
 
-    .btn-copy { background: transparent; border: 1px dashed var(--accent); color: var(--accent); }
-    .btn-copy:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn-delete { background: var(--accent-dark); color: #fff; }
-    .btn-delete:hover { filter: brightness(0.9); }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-top .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .chev {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      flex: 0 0 auto;
+      transition: transform 0.2s ease;
+    }
+
+    .card[data-open="1"] .chev { transform: rotate(180deg); }
+
+    .title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.35;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .title:hover { color: var(--accent); }
+
+    .mini-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tag {
+      font-size: 11px;
+      line-height: 1;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(245, 158, 11, 0.16);
+      color: var(--accent-2);
+    }
+
+    .content-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .copy-block {
+      border: 1px solid #f0d7bc;
+      border-radius: 14px;
+      background: var(--block-bg);
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    [data-theme="dark"] .copy-block { border-color: #333c49; }
+
+    .copy-block:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 22px rgba(16, 24, 40, 0.06);
+      transform: translateY(-1px);
+      background: rgba(255, 237, 213, 0.96);
+    }
+
+    [data-theme="dark"] .copy-block:hover { background: #252d3b; }
+
+    .copy-block-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .copy-label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      margin: 0;
+      white-space: pre-line;
+      word-break: break-word;
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 14px;
+      min-height: 24px;
+    }
+
+    .card-actions,
+    .sticky-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(180, 35, 24, 0.14);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(180, 35, 24, 0.18);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      opacity: 0.96;
+    }
+
+    .ghost {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .ghost:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .small {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .empty {
+      padding: 20px;
+      text-align: center;
+      border-radius: 16px;
+      border: 1px dashed var(--border-2);
+      color: var(--muted);
+      background: rgba(127, 127, 127, 0.04);
+    }
+
+    .footer {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      background: rgba(16, 24, 40, 0.92);
+      color: #fff;
+      padding: 11px 16px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(16, 24, 40, 0.2);
+      z-index: 9999;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sticky-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .sticky-item {
+      border: 1px solid #f0d7bc;
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+    }
+
+    [data-theme="dark"] .sticky-item { border-color: #303844; }
+
+    .sticky-item:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .sticky-item-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .sticky-item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 10px;
+    }
+
+    .sticky-chevron {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      flex: 0 0 auto;
+      transition: transform 0.2s ease;
+    }
+
+    .sticky-item[data-open="1"] .sticky-chevron { transform: rotate(180deg); }
+
+    .sticky-item-body {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sticky-item-content {
+      margin: 0;
+      white-space: pre-line;
+      word-break: break-word;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(10px) scale(0.988); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      :root { --sidebar-w: auto; }
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .wrap { padding: 16px; border-radius: 18px; }
+      .field { min-width: 100%; }
+      .card-top { flex-direction: column; }
+      .mini-tags { justify-content: flex-start; }
+      .results-head, .sticky-head { align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Professional Dashboard v3 — presentation layer only */
+    :root {
+      --bg: #f5f7fa;
+      --bg-soft: #ffffff;
+      --panel: rgba(255, 255, 255, 0.86);
+      --panel-2: #f8fafc;
+      --text: #111827;
+      --muted: #667085;
+      --border: #e5eaf1;
+      --border-2: #d6dde8;
+      --accent: #2563eb;
+      --accent-2: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, .09);
+      --card-bg: #fff;
+      --block-bg: #f8fafc;
+      --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+      --shadow-strong: 0 18px 42px rgba(15, 23, 42, .12);
+      --sidebar-width: 248px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0c111b;
+      --bg-soft: #151c28;
+      --panel: rgba(20, 27, 39, .88);
+      --panel-2: #182130;
+      --text: #eef2f7;
+      --muted: #9aa7b8;
+      --border: #263245;
+      --border-2: #35445a;
+      --accent: #60a5fa;
+      --accent-2: #93c5fd;
+      --accent-soft: rgba(96, 165, 250, .12);
+      --card-bg: #151d2a;
+      --block-bg: #111925;
+      --shadow: 0 8px 24px rgba(0, 0, 0, .28);
+      --shadow-strong: 0 18px 42px rgba(0, 0, 0, .38);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      display: block;
+      padding: 0;
+      background:
+        radial-gradient(circle at 82% -10%, rgba(37, 99, 235, .12), transparent 31%),
+        var(--bg);
+      font-size: 14px;
+    }
+
+    button, input, select { font: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, .22);
+      outline-offset: 2px;
+    }
+
+    .app-shell { min-height: 100vh; }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 12px 28px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 230px; }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, .24);
+      font-size: 21px;
+    }
+    .brand-title { font-size: 17px; font-weight: 750; letter-spacing: -.25px; }
+    .brand-version { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .brand-version span { margin-left: 5px; color: var(--accent); font-weight: 700; }
+
+    .header-stats { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .stat-card {
+      min-width: 106px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-soft);
+    }
+    .stat-card span { color: var(--muted); font-size: 11px; }
+    .stat-card strong { color: var(--text); font-size: 16px; }
+    .icon-button { width: 42px; height: 42px; padding: 0; font-size: 20px; }
+
+    .workspace { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      height: calc(100vh - 76px);
+      overflow-y: auto;
+      padding: 20px 14px;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+    .side-nav { display: grid; gap: 5px; }
+    .sidebar .tab-btn,
+    .category-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 12px;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      box-shadow: none;
+      text-align: left;
+      font-weight: 600;
+    }
+    .sidebar .tab-btn span,
+    .category-dot { width: 22px; text-align: center; font-size: 16px; }
+    .sidebar .tab-btn:hover,
+    .sidebar .tab-btn.active,
+    .category-button:hover,
+    .category-button.active {
+      color: var(--accent);
+      background: var(--accent-soft);
+      transform: none;
+      box-shadow: none;
+    }
+    .sidebar-label {
+      margin: 24px 12px 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .category-list { display: grid; gap: 3px; }
+    .category-button { justify-content: flex-start; font-size: 13px; font-weight: 550; }
+    .category-button .category-count {
+      margin-left: auto;
+      padding: 2px 7px;
+      border-radius: 99px;
+      color: var(--muted);
+      background: var(--panel-2);
+      font-size: 10px;
+    }
+    .category-dot { width: 9px; height: 9px; border-radius: 99px; background: #64748b; }
+    .category-button:nth-child(5n+1) .category-dot { background: #ef4444; }
+    .category-button:nth-child(5n+2) .category-dot { background: #f97316; }
+    .category-button:nth-child(5n+3) .category-dot { background: #8b5cf6; }
+    .category-button:nth-child(5n+4) .category-dot { background: #0ea5e9; }
+    .category-button:nth-child(5n+5) .category-dot { background: #10b981; }
+    .sidebar-tip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 24px 5px 0;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      background: var(--panel-2);
+    }
+    .sidebar-tip > span { font-size: 19px; }
+    .sidebar-tip strong, .sidebar-tip small { display: block; }
+    .sidebar-tip strong { color: var(--text); font-size: 11px; }
+    .sidebar-tip small { margin-top: 2px; font-size: 10px; }
+
+    .main-content { width: 100%; max-width: 1500px; min-width: 0; padding: 32px clamp(22px, 4vw, 58px) 60px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(280px, .75fr) minmax(360px, 1.25fr);
+      align-items: end;
+      gap: 36px;
+      margin-bottom: 22px;
+    }
+    .eyebrow { margin-bottom: 8px; color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin: 0; color: var(--text); font-size: clamp(27px, 3vw, 40px); letter-spacing: -.04em; }
+    .lead { margin-top: 9px; font-size: 13px; }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      height: 58px;
+      padding: 0 88px 0 48px;
+      border-radius: 17px;
+      border-color: var(--border);
+      background: var(--bg-soft);
+      box-shadow: 0 8px 28px rgba(15, 23, 42, .07);
+      font-size: 16px;
+    }
+    .search-wrap input:focus { transform: none; box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow); }
+    .search-icon { position: absolute; left: 17px; top: 50%; z-index: 2; transform: translateY(-50%); color: var(--muted); font-size: 23px; }
+    kbd {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 7px;
+      color: var(--muted);
+      background: var(--panel-2);
+      font: 600 10px/1 Inter, sans-serif;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 28px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+    }
+    .filter-bar .field { min-width: 0; }
+    .field label { margin: 0 0 6px 2px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    select, input { height: 42px; border-radius: 11px; }
+    .filter-bar > button { height: 42px; }
+
+    .results-head { margin: 0 0 14px; }
+    .section-title { color: var(--text); font-size: 18px; font-weight: 750; }
+    .section-title span { margin-left: 6px; color: var(--muted); font-size: 12px; font-weight: 550; }
+    .results-title { margin-top: 4px; font-size: 11px; }
+    .view-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge { padding: 7px 10px; border-color: var(--border); color: var(--muted); background: var(--panel-2); }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+    .card, .sticky-item {
+      overflow: hidden;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--card-bg);
+      box-shadow: 0 5px 18px rgba(15, 23, 42, .055);
+    }
+    .card::before, .sticky-item::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--tone, #64748b);
+    }
+    .sticky-item { position: relative; }
+    .card[data-tone="red"], .sticky-item[data-tone="red"] { --tone: #ef4444; --tone-soft: rgba(239, 68, 68, .09); }
+    .card[data-tone="orange"], .sticky-item[data-tone="orange"] { --tone: #f97316; --tone-soft: rgba(249, 115, 22, .09); }
+    .card[data-tone="purple"], .sticky-item[data-tone="purple"] { --tone: #8b5cf6; --tone-soft: rgba(139, 92, 246, .09); }
+    .card[data-tone="gray"], .sticky-item[data-tone="gray"] { --tone: #64748b; --tone-soft: rgba(100, 116, 139, .09); }
+    .card[data-tone="green"], .sticky-item[data-tone="green"] { --tone: #10b981; --tone-soft: rgba(16, 185, 129, .09); }
+    .card[data-tone="blue"], .sticky-item[data-tone="blue"] { --tone: #0ea5e9; --tone-soft: rgba(14, 165, 233, .09); }
+    [data-theme="dark"] .card, [data-theme="dark"] .sticky-item { border-color: var(--border); }
+    .card:hover, .sticky-item:hover { transform: translateY(-3px); border-color: var(--border-2); box-shadow: var(--shadow); }
+    .card-top { margin-bottom: 9px; }
+    .chev, .sticky-chevron { background: var(--tone-soft, var(--accent-soft)); color: var(--tone, var(--accent)); }
+    .title { font-size: 16px; letter-spacing: -.015em; }
+    .tag {
+      border: 0;
+      color: var(--tone, var(--accent-2));
+      background: var(--tone-soft, var(--accent-soft));
+      font-weight: 650;
+    }
+    .card-preview {
+      display: -webkit-box;
+      overflow: hidden;
+      min-height: 40px;
+      margin: 9px 0 0 36px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .card[data-open="1"] .card-preview { display: none; }
+    .content-group { margin-top: 16px; }
+    .copy-block { border-color: var(--border); background: var(--block-bg); cursor: default; }
+    .copy-block:hover { border-color: var(--border-2); background: var(--block-bg); transform: none; box-shadow: none; }
+    [data-theme="dark"] .copy-block, [data-theme="dark"] .copy-block:hover { border-color: var(--border); background: var(--block-bg); }
+    .copy-label { color: var(--tone, var(--accent)); font-weight: 750; }
+    .card-actions, .sticky-actions { align-items: center; padding-top: 12px; border-top: 1px solid var(--border); }
+    button { border-radius: 10px; background: var(--accent); box-shadow: 0 5px 14px rgba(37, 99, 235, .18); font-weight: 650; }
+    button:hover { box-shadow: 0 8px 18px rgba(37, 99, 235, .22); }
+    .primary-copy { margin-right: auto; }
+    .ghost { border-color: var(--border); background: var(--bg-soft); }
+    .ghost:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .danger { color: #dc2626; }
+    .danger:hover { border-color: #ef4444; background: rgba(239, 68, 68, .08); }
+    .toast { left: auto; right: 24px; bottom: 24px; transform: translateY(16px); border-radius: 12px; background: #111827; }
+    .toast::before { content: "✓"; margin-right: 8px; color: #34d399; font-weight: 900; }
+    .toast.show { transform: translateY(0); }
+    .sticky-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .sticky-item-title { font-size: 15px; }
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      min-height: 112px;
+      margin-bottom: 26px;
+      padding: 26px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--panel), var(--accent-soft));
+      box-shadow: var(--shadow);
+    }
+    .page-heading h2 { margin: 0; font-size: 30px; letter-spacing: -.035em; }
+    .page-heading p { margin: 6px 0 0; color: var(--muted); }
+    .empty { grid-column: 1 / -1; padding: 42px 20px; background: var(--panel); }
+
+    @media (max-width: 1080px) {
+      :root { --sidebar-width: 214px; }
+      .header-stats .stat-card { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 20px; }
+      .grid, .sticky-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .app-header { padding: 11px 14px; }
+      .brand-version { display: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .sidebar {
+        position: sticky;
+        top: 68px;
+        z-index: 90;
+        width: 100%;
+        height: auto;
+        padding: 8px 12px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .side-nav { display: flex; overflow-x: auto; }
+      .sidebar .tab-btn { width: auto; min-width: max-content; }
+      .sidebar-label, .category-list, .sidebar-tip { display: none; }
+      .main-content { padding: 24px 14px 44px; }
+      .filter-bar { grid-template-columns: 1fr; }
+      .hero { margin-bottom: 16px; }
+      .search-wrap input { height: 54px; }
+      .card-top { flex-direction: row; }
+      .mini-tags { justify-content: flex-end; }
+      .toast { right: 14px; bottom: 14px; left: 14px; text-align: center; }
+    }
   </style>
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<div class="wrap">
-  <div style="display:flex; justify-content: space-between; align-items:center; gap:12px;">
-    <div>
-      <h1>Quản lý Rủi ro</h1>
-      <p class="lead">Chọn Hệ → Nhóm lỗi. Thêm / Sửa / Xóa / Xuất / Nhập dữ liệu</p>
-    </div>
-    <div style="text-align:right;">
-      <div style="margin-bottom: 8px;">
-        <button id="loginBtn" class="small ghost">Đăng nhập Admin</button>
-        <div id="loginForm" class="login-form" style="display:none;">
-          <input id="adminEmailInput" type="email" placeholder="Email Admin">
-          <input id="adminPwdInput" type="password" placeholder="Mật khẩu Admin">
-          <button id="loginConfirmBtn" class="small ghost">OK</button>
-        </div>
-        <button id="logoutBtn" class="small ghost" style="display:none;">Thoát Admin</button>
-        <span id="adminStatus" class="admin-indicator" style="display:none;">ADMIN</span>
-      </div>
-      <div class="hint">Admin: có quyền sửa</div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div style="flex:1; min-width:220px;">
-      <label class="muted">Chọn Hệ</label>
-      <select id="systemSelect"></select>
-    </div>
-    <div style="flex:1; min-width:220px;">
-      <label class="muted">Chọn Nhóm lỗi</label>
-      <select id="groupSelect"></select>
-    </div>
-    <div style="min-width:160px;">
-      <label class="muted">Tìm (tiêu đề / nội dung)</label>
-      <input id="searchBox" class="search" placeholder="Gõ từ khóa...">
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="row">
-      <div style="flex:1;">
-        <div class="flex" style="justify-content:space-between;">
-          <div class="muted">Kết quả</div>
-          <button id="copyOutputBtn" class="small ghost">Sao chép</button>
-        </div>
-        <div id="output" class="content">Chọn Hệ để xem nội dung</div>
-      </div>
-      <div style="width:320px;">
-        <div class="muted">Thêm / Sửa mục</div>
-        <input id="newSystem" placeholder="Hệ (vd: RUMMY)" />
-        <input id="newGroup" placeholder="Nhóm lỗi (vd: TRÙNG IP)" />
-        <input id="newTitle" placeholder="Tiêu đề (vd: RUMMY TRÙNG IP)" />
-        <textarea id="newContent" rows="6" placeholder="Nội dung chi tiết..."></textarea>
-        <div class="controls">
-          <button id="addButton" class="small admin-only">ADD</button>
-          <button id="updateButton" class="small ghost admin-only" style="display:none;">UPDATE</button>
-          <button id="clearForm" class="small">CLEAR</button>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🛡</div>
+        <div>
+          <div class="brand-title">Risk Manager</div>
+          <div class="brand-version">Professional Dashboard <span>Version 3.0</span></div>
         </div>
       </div>
+      <div class="header-stats" aria-label="Thống kê nhanh">
+        <div class="stat-card"><span>Tổng template</span><strong id="totalBadge">0</strong></div>
+        <div class="stat-card"><span>Favorite</span><strong id="favoriteCount">0</strong></div>
+        <div class="stat-card"><span>Recent</span><strong id="recentCount">0</strong></div>
+        <button id="themeToggle" class="theme-toggle icon-button" type="button" aria-label="Đổi giao diện">◐</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <nav class="side-nav" aria-label="Điều hướng">
+          <button id="tabMain" class="tab-btn active" type="button"><span>⌂</span>Tất cả template</button>
+          <button id="tabMine" class="tab-btn" type="button"><span>★</span>Favorite</button>
+          <button id="tabRecent" class="tab-btn" type="button"><span>◷</span>Recent</button>
+          <button id="tabRules" class="tab-btn" type="button"><span>✓</span>Hướng dẫn nghiệp vụ</button>
+        </nav>
+        <div class="sidebar-label">Category</div>
+        <div id="categoryList" class="category-list"></div>
+        <div class="sidebar-tip">
+          <span>⌘</span>
+          <div><strong>Phím tắt</strong><small>Ctrl + K để tìm kiếm</small></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div id="mainArea">
+          <section class="hero">
+            <div>
+              <div class="eyebrow">THƯ VIỆN XỬ LÝ RỦI RO</div>
+              <h1>Tìm đúng mẫu. Xử lý nhanh hơn.</h1>
+              <p class="lead">Tìm theo tiêu đề, nội dung, nhóm lỗi hoặc cách xử lý.</p>
+            </div>
+            <div class="search-wrap">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <input id="searchBox" autocomplete="off" placeholder="Tìm template..." aria-label="Tìm template" />
+              <kbd>Ctrl K</kbd>
+            </div>
+          </section>
+
+          <section class="filter-bar">
+            <div class="field">
+              <label for="systemSelect">Nhóm lỗi</label>
+              <select id="systemSelect"></select>
+            </div>
+            <div class="field">
+              <label for="groupSelect">Cách xử lý</label>
+              <select id="groupSelect"></select>
+            </div>
+            <button id="clearFiltersBtn" class="small ghost" type="button">Xóa bộ lọc</button>
+          </section>
+
+          <div class="results-head">
+            <div>
+              <div class="section-title">Templates <span id="countBadge">0 mục</span></div>
+              <div class="results-title" id="resultsTitle">Kết quả sẽ hiển thị ở đây</div>
+            </div>
+            <div class="view-actions">
+              <span class="badge" id="modeBadge">Chế độ rút gọn</span>
+              <button id="toggleModeBtn" class="small ghost" type="button">Mở rộng tất cả</button>
+            </div>
+          </div>
+          <div id="results" class="grid"></div>
+        </div>
+
+        <div id="mineArea" style="display:none;">
+          <div class="page-heading"><div><div class="eyebrow">BỘ SƯU TẬP</div><h2>Favorite</h2><p>Nội dung bạn đã lưu để truy cập nhanh.</p></div></div>
+          <div class="results-head">
+            <div class="results-title">Danh sách yêu thích</div>
+            <div class="view-actions">
+              <button id="stickyModeBtn" class="small ghost" type="button">Mở rộng tất cả</button>
+              <button id="clearStickyBtn" class="small ghost danger" type="button">Xóa tất cả</button>
+            </div>
+          </div>
+          <div id="stickyList" class="sticky-list"></div>
+        </div>
+
+        <div id="recentArea" style="display:none;">
+          <div class="page-heading"><div><div class="eyebrow">LỊCH SỬ THAO TÁC</div><h2>Recent</h2><p>10 template được copy gần nhất.</p></div></div>
+          <div id="recentList" class="sticky-list"></div>
+        </div>
+
+        <div id="rulesArea" style="display:none;">
+          <div class="page-heading"><div><div class="eyebrow">TÀI LIỆU NỘI BỘ</div><h2>Hướng dẫn nghiệp vụ</h2><p>Nhấn vào tiêu đề để mở hoặc thu gọn nội dung.</p></div></div>
+          <div id="rulesList" class="grid"></div>
+        </div>
+      </main>
     </div>
   </div>
 
-  <div class="footer">
-    <button id="exportBtn" class="small">Export JSON</button>
-    <label class="file-input small ghost admin-only" style="cursor:pointer;">
-      Import JSON <input id="importFile" type="file" accept="application/json" style="display:none;">
-    </label>
-    <button id="resetBtn" class="small ghost admin-only">Reset to default</button>
-    <div class="hint">Dữ liệu từ Supabase. Export để chia sẻ (JSON).</div>
-  </div>
+  <div id="toast" class="toast"></div>
 
-  <div class="list" id="listArea"></div>
-</div>
+<script src="rules.js"></script>
 
 <script>
 const systemSelect = document.getElementById('systemSelect');
 const groupSelect = document.getElementById('groupSelect');
-const output = document.getElementById('output');
-const listArea = document.getElementById('listArea');
 const searchBox = document.getElementById('searchBox');
+const results = document.getElementById('results');
+const resultsTitle = document.getElementById('resultsTitle');
+const countBadge = document.getElementById('countBadge');
+const modeBadge = document.getElementById('modeBadge');
+const themeToggle = document.getElementById('themeToggle');
+const toast = document.getElementById('toast');
+const tabMain = document.getElementById('tabMain');
+const tabMine = document.getElementById('tabMine');
+const tabRecent = document.getElementById('tabRecent');
+const toggleModeBtn = document.getElementById('toggleModeBtn');
+const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+const stickyList = document.getElementById('stickyList');
+const stickyModeBtn = document.getElementById('stickyModeBtn');
+const clearStickyBtn = document.getElementById('clearStickyBtn');
+const mainArea = document.getElementById('mainArea');
+const mineArea = document.getElementById('mineArea');
+const recentArea = document.getElementById('recentArea');
+const recentList = document.getElementById('recentList');
+const tabRules = document.getElementById('tabRules');
+const rulesArea = document.getElementById('rulesArea');
+const rulesList = document.getElementById('rulesList');
+const categoryList = document.getElementById('categoryList');
+const totalBadge = document.getElementById('totalBadge');
+const favoriteCount = document.getElementById('favoriteCount');
+const recentCount = document.getElementById('recentCount');
+let rulesData = Array.isArray(window.RULES_DATA) ? window.RULES_DATA : [];
 
-const newSystem = document.getElementById('newSystem');
-const newGroup = document.getElementById('newGroup');
-const newTitle = document.getElementById('newTitle');
-const newContent = document.getElementById('newContent');
-const addButton = document.getElementById('addButton');
-const updateButton = document.getElementById('updateButton');
-const clearForm = document.getElementById('clearForm');
+tabRules.addEventListener('click', () => setTab('rules'));
 
-const exportBtn = document.getElementById('exportBtn');
-const importFile = document.getElementById('importFile');
-const resetBtn = document.getElementById('resetBtn');
+function renderRules() {
+  if (!rulesList) return;
 
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const adminStatus = document.getElementById('adminStatus');
-const loginForm = document.getElementById('loginForm');
-const adminEmailInput = document.getElementById('adminEmailInput');
-const adminPwdInput = document.getElementById('adminPwdInput');
-const loginConfirmBtn = document.getElementById('loginConfirmBtn');
+  rulesList.innerHTML = '';
 
-/* Supabase config */
-const SUPABASE_URL = "https://sdljyvsltpmxtoipsmec.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_pUC6dZmq23PBkEdZ6qbCcg_GXE7jDYh";
-const supabase = supabase.createClient(https://sdljyvsltpmxtoipsmec.supabase.co, sb_publishable_pUC6dZmq23PBkEdZ6qbCcg_GXE7jDYh);
+  if (!Array.isArray(rulesData) || !rulesData.length) {
+    rulesList.innerHTML = '<div class="empty">Không có dữ liệu rules.js</div>';
+    return;
+  }
 
-let data = [], editIndex = -1, currentSession=null, isAdminFlag=false;
+  rulesData.forEach((item, index) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.style.animationDelay = `${Math.min(index * 45, 280)}ms`;
+    card.dataset.open = '0';
 
-function applyPermission(){
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdminFlag?'':'none');
-  loginBtn.style.display = isAdminFlag?'none':'';
-  loginForm.style.display = 'none';
-  logoutBtn.style.display = isAdminFlag?'':'none';
-  adminStatus.style.display = isAdminFlag?'':'none';
-}
+    const top = document.createElement('div');
+    top.className = 'card-top';
 
-async function checkProfileAndApply(session){
-  currentSession = session;
-  isAdminFlag = false;
-  if(!session || !session.user){ applyPermission(); return; }
-  try{
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id',session.user.id).single();
-    isAdminFlag = profile?.role==='admin';
-  }catch(e){ isAdminFlag=false; }
-  applyPermission();
-}
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'title-wrap';
 
-(async function initAuth(){
-  try{
-    const { data } = await supabase.auth.getSession();
-    await checkProfileAndApply(data.session ?? null);
-  }catch(e){}
-  supabase.auth.onAuthStateChange((event,session)=>{ checkProfileAndApply(session); });
-})();
+    const chev = document.createElement('div');
+    chev.className = 'chev';
+    chev.textContent = '⌄';
 
-async function loadRisks(){
-  try{
-    const { data: rows, error } = await supabase.from('risk_items').select('*').order('created_at',{ascending:false});
-    if(error) return alert('Load lỗi: '+error.message);
-    data = rows||[];
-    populateSystems(); populateGroups(); renderList();
-  }catch(e){ console.error(e); alert('Load lỗi'); }
-}
+    const h4 = document.createElement('h4');
+    h4.className = 'title';
+    h4.textContent = item.title || '';
 
-/* Add/Update/Delete */
-async function addRisk(){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
-  const sys=newSystem.value.trim(), grp=newGroup.value.trim(), title=newTitle.value.trim(), cont=newContent.value.trim();
-  if(!sys||!grp||!title||!cont){ alert('Nhập đầy đủ'); return; }
-  const { error } = await supabase.from('risk_items').insert([{ system:sys, group:grp, title, content:cont }]);
-  if(error) alert(error.message); else{ clearInputs(); await loadRisks(); }
-}
+    titleWrap.appendChild(chev);
+    titleWrap.appendChild(h4);
 
-async function updateRisk(id){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
-  const sys=newSystem.value.trim(), grp=newGroup.value.trim(), title=newTitle.value.trim(), cont=newContent.value.trim();
-  if(!sys||!grp||!title||!cont){ alert('Nhập đầy đủ'); return; }
-  const { error } = await supabase.from('risk_items').update({ system:sys, group:grp, title, content:cont }).eq('id',id);
-  if(error) alert(error.message); else{ clearInputs(); await loadRisks(); }
-}
+    top.appendChild(titleWrap);
 
-async function deleteRisk(id){ if(!isAdminFlag){ alert('Cần quyền Admin'); return; }
-  if(!confirm('Xác nhận xóa?')) return;
-  const { error } = await supabase.from('risk_items').delete().eq('id',id);
-  if(error) alert(error.message); else await loadRisks();
-}
+    const contentGroup = document.createElement('div');
+    contentGroup.className = 'content-group';
+    contentGroup.style.display = 'none';
 
-/* Render & helpers */
-function getUniqueSystems(){ return [...new Set(data.map(d=>d.system))].filter(Boolean).sort(); }
-function getGroupsFor(sys){ return [...new Set(data.filter(d=>d.system===sys).map(d=>d.group))].filter(Boolean).sort(); }
+    const mainBlock = document.createElement('div');
+    mainBlock.className = 'copy-block';
 
-function populateSystems(){
-  const selected = systemSelect.value;
-  systemSelect.innerHTML = '';
-  const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='-- Chọn Hệ --'; systemSelect.appendChild(placeholder);
-  getUniqueSystems().forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; systemSelect.appendChild(o); });
-  if(selected && [...systemSelect.options].some(o=>o.value===selected)) systemSelect.value=selected;
-  populateGroups();
-}
+    const mainHead = document.createElement('div');
+    mainHead.className = 'copy-block-head';
 
-function populateGroups(){
-  const sys=systemSelect.value;
-  groupSelect.innerHTML='';
-  const allOpt=document.createElement('option'); allOpt.value=''; allOpt.textContent='Tất cả nhóm'; groupSelect.appendChild(allOpt);
-  if(sys) getGroupsFor(sys).forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; groupSelect.appendChild(o); });
-  populateContent(); renderList();
-}
+    const mainLabel = document.createElement('div');
+    mainLabel.className = 'copy-label';
+    mainLabel.textContent = 'Nội dung';
 
-function populateContent(){
-  const sys=systemSelect.value, grp=groupSelect.value;
-  if(!sys){ output.textContent='Chọn Hệ để xem nội dung'; return; }
-  const items = !grp?data.filter(d=>d.system===sys):data.filter(d=>d.system===sys && d.group===grp);
-  output.textContent = items.length?items.map(i=>`Tiêu đề: ${i.title}\\n${i.content}`).join('\\n\\n'):'Không có dữ liệu';
-}
+    const mainCopyBtn = document.createElement('button');
+    mainCopyBtn.className = 'small ghost';
+    mainCopyBtn.type = 'button';
+    mainCopyBtn.textContent = 'Copy nội dung';
 
-function renderList(){
-  listArea.innerHTML='';
-  const q=(searchBox.value||'').trim().toLowerCase();
-  data.forEach(d=>{
-    if(q && !( (d.title||'')+' '+(d.content||'')+' '+(d.system||'')+' '+(d.group||'') ).toLowerCase().includes(q)) return;
-    const item=document.createElement('div'); item.className='item';
-    const meta=document.createElement('div'); meta.className='meta';
-    const h4=document.createElement('h4'); h4.textContent=`${d.title} — ${d.system} / ${d.group}`;
-    const p=document.createElement('p'); p.textContent=d.content;
-    meta.appendChild(h4); meta.appendChild(p);
-    const actions=document.createElement('div'); actions.className='actions';
-    const btnCopy=document.createElement('button'); btnCopy.className='small btn-copy'; btnCopy.textContent='Sao chép';
-    btnCopy.onclick=()=>{ navigator.clipboard.writeText(d.content).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); };
-    actions.appendChild(btnCopy);
-    if(isAdminFlag){
-      const btnEdit=document.createElement('button'); btnEdit.className='small ghost'; btnEdit.textContent='Sửa'; btnEdit.onclick=()=>startEdit(d.id);
-      const btnDel=document.createElement('button'); btnDel.className='small btn-delete'; btnDel.textContent='Xóa'; btnDel.onclick=()=>deleteRisk(d.id);
-      actions.appendChild(btnEdit); actions.appendChild(btnDel);
-    }
-    item.appendChild(meta); item.appendChild(actions); listArea.appendChild(item);
+    mainHead.appendChild(mainLabel);
+    mainHead.appendChild(mainCopyBtn);
+
+    const mainText = document.createElement('p');
+    mainText.className = 'content';
+    mainText.textContent = item.content || '';
+
+    mainBlock.appendChild(mainHead);
+    mainBlock.appendChild(mainText);
+
+    attachCopyOnClick(mainBlock, item.content || '', 'Đã Copy nội dung');
+    attachCopyOnClick(mainCopyBtn, item.content || '', 'Đã Copy nội dung');
+
+    contentGroup.appendChild(mainBlock);
+
+    const expandHint = document.createElement('div');
+    expandHint.style.marginTop = '12px';
+    expandHint.style.fontSize = '12px';
+    expandHint.style.color = 'var(--muted)';
+    expandHint.textContent = 'Nhấn tiêu đề để mở nội dung';
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      if (e.target.closest('.content-group')) return;
+
+      const nowOpen = card.dataset.open !== '1';
+      card.dataset.open = nowOpen ? '1' : '0';
+      contentGroup.style.display = nowOpen ? 'grid' : 'none';
+      chev.textContent = nowOpen ? '⌃' : '⌄';
+      expandHint.textContent = nowOpen ? 'Nhấn vào card tiêu đề để thu gọn' : 'Nhấn vào card tiêu đề để mở nội dung';
+    });
+
+    card.appendChild(top);
+    card.appendChild(expandHint);
+    card.appendChild(contentGroup);
+    rulesList.appendChild(card);
   });
 }
 
-function startEdit(id){
-  const d = data.find(r=>r.id===id);
-  if(!d){ alert('Không tìm thấy dữ liệu'); return; }
-  editIndex=id;
-  newSystem.value=d.system; newGroup.value=d.group; newTitle.value=d.title; newContent.value=d.content;
-  updateButton.style.display='inline-block'; addButton.style.display='none';
-}
+const THEME_KEY = 'risk_manager_theme_v4';
+const STICKY_KEY = 'risk_manager_sticky_v1';
+const MODE_KEY = 'risk_manager_mode_v1';
+const TAB_KEY = 'risk_manager_tab_v1';
+const RECENT_KEY = 'risk_manager_recent_v1';
 
-function clearInputs(){
-  newSystem.value=''; newGroup.value=''; newTitle.value=''; newContent.value='';
-  editIndex=-1;
-  updateButton.style.display='none'; addButton.style.display='inline-block';
-}
+const DEFAULT_DATA = [
+  { system: 'RUMMY', group: 'TRÙNG IP', title: 'RUMMY TRÙNG IP', content: '會員ID :\n*拒絕原因 : 我本人沒有充值，上級有多個IP地址，不符合RUMMY MATCH的提現條件。\n*會員風險評級 : 有問題\n*結論 : 扣除獎勵' },
+  { system: 'RUMMY', group: 'KHÔNG NẠP', title: 'RUMMY KHÔNG NẠP', content: '會員ID :\n*拒絕原因 : 我和上級都領取了獎勵，但還未充值，未達到提現獎勵的條件。\n*會員風險評級 : 中嫌疑\n*結論 : 要求會員充值。' },
+  { system: 'RUMMY', group: 'TỈ LỆ THẤP', title: 'RUMMY TỈ LỆ THẤP', content: '會員ID :\n*拒絕原因 : 以低投注比例領取 RUMMY 獎勵\n*會員風險評級 : 有問題\n*結論 : 扣除獎勵' },
+  { system: 'CHƠI MỨC CƯỢC QUÁ THẤP', group: 'TỈ LỆ THẤP', title: 'CHƠI MỨC CƯỢC QUÁ THẤP - TỈ LỆ THẤP', content: '會員ID :\n*拒絕原因 : 故意下注小額，達到流水直接提現 刷首充獎勵\n*會員風險評級 : 中嫌疑\n*結論 : 讓會員繼續下注' }
+];
 
-/* Event listeners */
-addButton.addEventListener('click', addRisk);
-updateButton.addEventListener('click', ()=>updateRisk(editIndex));
-clearForm.addEventListener('click', clearInputs);
-searchBox.addEventListener('input', renderList);
-systemSelect.addEventListener('change', populateGroups);
-groupSelect.addEventListener('change', ()=>{ populateContent(); renderList(); });
+let data = [];
+let stickyItems = [];
+let recentItems = [];
+let currentTab = localStorage.getItem(TAB_KEY) || 'main';
+let compactMode = localStorage.getItem(MODE_KEY) !== 'expanded';
+let stickyCompactMode = localStorage.getItem('risk_manager_sticky_mode_v1') !== 'expanded';
 
-document.getElementById('copyOutputBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(output.textContent).then(()=>alert('Đã sao chép')).catch(()=>alert('Sao chép thất bại')); });
-
-loginBtn.addEventListener('click', ()=>{ loginForm.style.display='flex'; loginBtn.style.display='none'; adminEmailInput.focus(); });
-loginConfirmBtn.addEventListener('click', async ()=>{ await login(); });
-logoutBtn.addEventListener('click', async ()=>{ await logout(); });
-
-exportBtn.addEventListener('click', ()=>{ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='riskData.json'; a.click(); URL.revokeObjectURL(url); });
-
-importFile.addEventListener('change', (e)=>{
-  if(!isAdminFlag){ alert('Cần quyền Admin'); importFile.value=''; return; }
-  const f=e.target.files[0]; if(!f) return;
-  const reader=new FileReader();
-  reader.onload=()=>{ try{ const arr=JSON.parse(reader.result); if(!Array.isArray(arr)) throw new Error('File không đúng định dạng'); if(confirm('Nhập file sẽ thay thế dữ liệu hiện tại?')){ (async()=>{
-    const ids = data.map(d=>d.id);
-    if(ids.length){ const { error } = await supabase.from('risk_items').delete().in('id',ids); if(error) return alert('Xoá cũ lỗi:'+error.message); }
-    const { error: insErr } = await supabase.from('risk_items').insert(arr); if(insErr) return alert('Import lỗi:'+insErr.message);
-    data = arr; populateSystems(); renderList(); alert('Import thành công');
-  })(); }}catch(err){ alert('Lỗi: '+err.message); }}; reader.readAsText(f);
-});
-
-resetBtn.addEventListener('click', async ()=>{
-  if(!isAdminFlag) return;
-  if(confirm('Reset về mặc định?')){
-    try{
-      const ids = data.map(d=>d.id);
-      if(ids.length){ const { error } = await supabase.from('risk_items').delete().in('id',ids); if(error) return alert('Reset lỗi:'+error.message); }
-      data=[]; populateSystems(); renderList();
-    }catch(err){ console.error(err); alert('Reset lỗi'); }
+function safeCopy(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  textarea.style.top = '0';
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  try {
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+  } catch (err) {
+    document.body.removeChild(textarea);
+    return Promise.reject(err);
   }
-});
+}
 
-/* Auth */
-async function login(){
-  const email = adminEmailInput.value.trim(), password = adminPwdInput.value;
-  if(!email||!password) return alert('Nhập email và mật khẩu');
-  // Sử dụng signInWithPassword để đăng nhập
-  const { data: authResponse, error } = await supabase.auth.signInWithPassword({ email,password });
-  if(error){
-    alert('Login lỗi: '+error.message);
-    loginForm.style.display='flex';
-    loginBtn.style.display='none';
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 1300);
+}
+
+function unique(values) { return [...new Set(values)].sort(); }
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀' : '◐';
+  themeToggle.title = theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối';
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  applyTheme(saved === 'dark' ? 'dark' : 'light');
+}
+
+function loadSticky() {
+  try {
+    stickyItems = JSON.parse(localStorage.getItem(STICKY_KEY) || '[]');
+    if (!Array.isArray(stickyItems)) stickyItems = [];
+  } catch {
+    stickyItems = [];
+  }
+}
+
+function saveSticky() {
+  localStorage.setItem(STICKY_KEY, JSON.stringify(stickyItems));
+}
+
+function normalizeItem(item) {
+  return { title: item.title, content: item.content, system: item.system, group: item.group };
+}
+
+function getCategoryTone(item) {
+  const value = `${item.system || ''} ${item.group || ''} ${item.title || ''}`.toLowerCase();
+  if (value.includes('ip')) return 'red';
+  if (value.includes('bonus') || value.includes('khuyến mãi') || value.includes('thưởng')) return 'orange';
+  if (value.includes('vip')) return 'purple';
+  if (value.includes('backend')) return 'gray';
+  if (value.includes('game') || value.includes('rummy')) return 'green';
+  return 'blue';
+}
+
+function updateDashboardCounts() {
+  totalBadge.textContent = data.length;
+  favoriteCount.textContent = stickyItems.length;
+  recentCount.textContent = recentItems.length;
+}
+
+function loadRecent() {
+  try {
+    recentItems = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    if (!Array.isArray(recentItems)) recentItems = [];
+    recentItems = recentItems.slice(0, 10);
+  } catch {
+    recentItems = [];
+  }
+}
+
+function saveRecent() {
+  localStorage.setItem(RECENT_KEY, JSON.stringify(recentItems));
+}
+
+function addRecent(item) {
+  if (!item || !item.title) return;
+  const key = `${item.title}||${item.content}`;
+  recentItems = [normalizeItem(item), ...recentItems.filter(entry => `${entry.title}||${entry.content}` !== key)].slice(0, 10);
+  saveRecent();
+  renderRecent();
+  updateDashboardCounts();
+}
+
+function renderRecent() {
+  recentList.innerHTML = '';
+  if (!recentItems.length) {
+    recentList.innerHTML = '<div class="empty">Chưa có lịch sử. Template sẽ xuất hiện ở đây sau khi bạn copy.</div>';
     return;
   }
-  adminEmailInput.value=''; adminPwdInput.value='';
-  // Kiểm tra và áp dụng quyền dựa trên session vừa nhận được
-  await checkProfileAndApply(authResponse?.session ?? null);
-  await loadRisks();
-  alert('Đăng nhập thành công');
+
+  recentItems.forEach(item => {
+    const box = document.createElement('article');
+    box.className = 'sticky-item';
+    box.dataset.tone = getCategoryTone(item);
+
+    const title = document.createElement('h4');
+    title.className = 'sticky-item-title';
+    title.textContent = item.title;
+
+    const meta = document.createElement('div');
+    meta.className = 'mini-tags';
+    meta.style.justifyContent = 'flex-start';
+    [item.system, item.group].forEach(tagText => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = tagText;
+      meta.appendChild(tag);
+    });
+
+    const preview = document.createElement('p');
+    preview.className = 'card-preview';
+    preview.style.marginLeft = '0';
+    preview.textContent = item.content;
+
+    const actions = document.createElement('div');
+    actions.className = 'sticky-actions';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'small primary-copy';
+    copyBtn.type = 'button';
+    copyBtn.textContent = 'Copy';
+    copyBtn.addEventListener('click', () => {
+      safeCopy(item.content)
+        .then(() => {
+          addRecent(item);
+          showToast('Copied');
+        })
+        .catch(() => showToast('Copy thất bại'));
+    });
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'small ghost';
+    favoriteBtn.type = 'button';
+    favoriteBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
+    favoriteBtn.addEventListener('click', () => addSticky(item));
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(favoriteBtn);
+    box.appendChild(title);
+    box.appendChild(meta);
+    box.appendChild(preview);
+    box.appendChild(actions);
+    recentList.appendChild(box);
+  });
 }
 
-async function logout(){
-  try{
-    await supabase.auth.signOut();
-    currentSession=null; isAdminFlag=false; applyPermission(); await loadRisks();
-    alert('Đã thoát Admin');
+function renderCategoryNav() {
+  categoryList.innerHTML = '';
+  unique(data.map(item => item.system)).forEach(system => {
+    const button = document.createElement('button');
+    button.className = 'category-button';
+    button.type = 'button';
+    button.dataset.value = system;
+    button.innerHTML = `<span class="category-dot"></span><span>${system}</span><span class="category-count">${data.filter(item => item.system === system).length}</span>`;
+    button.addEventListener('click', () => {
+      setTab('main');
+      systemSelect.value = system;
+      populateGroupOptions();
+      render();
+      document.querySelectorAll('.category-button').forEach(item => item.classList.toggle('active', item === button));
+    });
+    categoryList.appendChild(button);
+  });
+}
+
+function isStickySaved(item) {
+  const key = `${item.title}||${item.content}`;
+  return stickyItems.some(s => `${s.title}||${s.content}` === key);
+}
+
+function addSticky(item) {
+  if (isStickySaved(item)) {
+    showToast('Đã có trong NỘI DUNG CỦA TÔI');
+    return;
   }
-  catch(e){ console.error(e); alert('Thoát lỗi'); }
+  stickyItems.unshift(normalizeItem(item));
+  saveSticky();
+  renderSticky();
+  render();
+  renderRecent();
+  updateDashboardCounts();
+  showToast('Đã lưu vào NỘI DUNG CỦA TÔI');
 }
 
-/* Init */
-(async function(){ applyPermission(); await loadRisks(); })();
+function removeSticky(index) {
+  stickyItems.splice(index, 1);
+  saveSticky();
+  renderSticky();
+  render();
+  renderRecent();
+  updateDashboardCounts();
+}
+
+function clearSticky() {
+  if (!stickyItems.length) return;
+  if (!confirm('Xóa toàn bộ NỘI DUNG CỦA TÔI?')) return;
+  stickyItems = [];
+  saveSticky();
+  renderSticky();
+  render();
+  renderRecent();
+  updateDashboardCounts();
+}
+
+function populateSystemOptions() {
+  const current = systemSelect.value;
+  const systems = unique(data.map(d => d.system));
+  systemSelect.innerHTML = '';
+  const optAll = document.createElement('option');
+  optAll.value = '';
+  optAll.textContent = 'Tất cả nhóm lỗi';
+  systemSelect.appendChild(optAll);
+  systems.forEach(system => {
+    const opt = document.createElement('option');
+    opt.value = system;
+    opt.textContent = system;
+    systemSelect.appendChild(opt);
+  });
+  if (current && [...systemSelect.options].some(o => o.value === current)) systemSelect.value = current;
+}
+
+function populateGroupOptions() {
+  const system = systemSelect.value;
+  const current = groupSelect.value;
+  const groups = system ? unique(data.filter(d => d.system === system).map(d => d.group)) : unique(data.map(d => d.group));
+  groupSelect.innerHTML = '';
+  const optAll = document.createElement('option');
+  optAll.value = '';
+  optAll.textContent = 'Tất cả cách xử lý';
+  groupSelect.appendChild(optAll);
+  groups.forEach(group => {
+    const opt = document.createElement('option');
+    opt.value = group;
+    opt.textContent = group;
+    groupSelect.appendChild(opt);
+  });
+  if (current && [...groupSelect.options].some(o => o.value === current)) groupSelect.value = current;
+}
+
+function splitContent(text) {
+  const match = text.match(/^(.*?)(?:\n+)?\*\s*WD ABNORMAL\s*(.*)$/is);
+  if (!match) return { main: text.trim(), note: null };
+  const main = (match[1] || '').trim();
+  const note = ('* WD ABNORMAL ' + (match[2] || '').trim()).trim();
+  return { main, note };
+}
+
+function getFilteredData() {
+  const system = systemSelect.value;
+  const group = groupSelect.value;
+  const q = searchBox.value.trim().toLowerCase();
+  return data.filter(item => {
+    if (system && item.system !== system) return false;
+    if (group && item.group !== group) return false;
+    if (!q) return true;
+    const hay = `${item.title} ${item.content} ${item.system} ${item.group}`.toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function attachCopyOnClick(element, text, toastMessage, item) {
+  element.addEventListener('click', (e) => {
+    e.stopPropagation();
+    safeCopy(text)
+      .then(() => {
+        if (item) addRecent(item);
+        showToast(item ? 'Copied' : toastMessage);
+      })
+      .catch(() => showToast('Copy thất bại'));
+  });
+}
+
+function renderSticky() {
+  stickyList.innerHTML = '';
+  if (!stickyItems.length) {
+    stickyList.innerHTML = '<div class="empty">Chưa có nội dung nào được lưu.</div>';
+    stickyModeBtn.textContent = 'Mở rộng tất cả';
+    return;
+  }
+
+  stickyModeBtn.textContent = stickyCompactMode ? 'Mở rộng tất cả' : 'Rút gọn tất cả';
+
+  stickyItems.forEach((item, index) => {
+    const split = splitContent(item.content);
+    const isOpen = !stickyCompactMode;
+
+    const box = document.createElement('div');
+    box.className = 'sticky-item';
+    box.dataset.open = isOpen ? '1' : '0';
+    box.dataset.tone = getCategoryTone(item);
+
+    const head = document.createElement('div');
+    head.className = 'sticky-item-head';
+
+    const titleWrap = document.createElement('div');
+    titleWrap.style.minWidth = '0';
+    titleWrap.style.flex = '1';
+
+    const title = document.createElement('h4');
+    title.className = 'sticky-item-title';
+    title.textContent = item.title;
+
+    const meta = document.createElement('div');
+    meta.style.display = 'flex';
+    meta.style.gap = '6px';
+    meta.style.flexWrap = 'wrap';
+    meta.style.marginTop = '8px';
+    [item.system, item.group].forEach(tagText => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = tagText;
+      meta.appendChild(tag);
+    });
+
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(meta);
+
+    const chev = document.createElement('div');
+    chev.className = 'sticky-chevron';
+    chev.textContent = isOpen ? '⌃' : '⌄';
+
+    head.appendChild(titleWrap);
+    head.appendChild(chev);
+
+    const body = document.createElement('div');
+    body.className = 'sticky-item-body';
+    body.style.display = isOpen ? 'grid' : 'none';
+
+    const contentGroup = document.createElement('div');
+    contentGroup.className = 'content-group';
+
+    const mainBlock = document.createElement('div');
+    mainBlock.className = 'copy-block';
+    const mainHead = document.createElement('div');
+    mainHead.className = 'copy-block-head';
+    const mainLabel = document.createElement('div');
+    mainLabel.className = 'copy-label';
+    mainLabel.textContent = 'Phần chính';
+    const mainCopyBtn = document.createElement('button');
+    mainCopyBtn.className = 'small ghost';
+    mainCopyBtn.type = 'button';
+    mainCopyBtn.textContent = 'Copy nội dung đăng nhóm';
+    mainHead.appendChild(mainLabel);
+    mainHead.appendChild(mainCopyBtn);
+    const mainText = document.createElement('p');
+    mainText.className = 'content';
+    mainText.textContent = split.main;
+    mainBlock.appendChild(mainHead);
+    mainBlock.appendChild(mainText);
+    attachCopyOnClick(mainBlock, split.main, 'Đã Copy nội dung đăng nhóm', item);
+    attachCopyOnClick(mainCopyBtn, split.main, 'Đã Copy nội dung đăng nhóm', item);
+    contentGroup.appendChild(mainBlock);
+
+    if (split.note) {
+      const noteBlock = document.createElement('div');
+      noteBlock.className = 'copy-block';
+      const noteHead = document.createElement('div');
+      noteHead.className = 'copy-block-head';
+      const noteLabel = document.createElement('div');
+      noteLabel.className = 'copy-label';
+      noteLabel.textContent = 'Ghi chú';
+      const noteCopyBtn = document.createElement('button');
+      noteCopyBtn.className = 'small ghost';
+      noteCopyBtn.type = 'button';
+      noteCopyBtn.textContent = 'Copy Ghi Chú';
+      noteHead.appendChild(noteLabel);
+      noteHead.appendChild(noteCopyBtn);
+      const noteText = document.createElement('p');
+      noteText.className = 'content';
+      noteText.textContent = split.note;
+      noteBlock.appendChild(noteHead);
+      noteBlock.appendChild(noteText);
+      attachCopyOnClick(noteBlock, split.note, 'Đã copy ghi chú', item);
+      attachCopyOnClick(noteCopyBtn, split.note, 'Đã copy ghi chú', item);
+      contentGroup.appendChild(noteBlock);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'sticky-actions';
+
+    const copyAllBtn = document.createElement('button');
+    copyAllBtn.className = 'small ghost';
+    copyAllBtn.type = 'button';
+    copyAllBtn.textContent = 'Copy toàn bộ';
+    copyAllBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      safeCopy(item.content)
+        .then(() => {
+          addRecent(item);
+          showToast('Copied');
+        })
+        .catch(() => showToast('Copy thất bại'));
+    });
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'small ghost';
+    saveBtn.type = 'button';
+    saveBtn.textContent = '★';
+    saveBtn.title = 'Lưu lại nội dung này vào đầu danh sách';
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addSticky(item);
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'small ghost';
+    removeBtn.type = 'button';
+    removeBtn.textContent = 'Xóa';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeSticky(index);
+    });
+
+    actions.appendChild(copyAllBtn);
+    actions.appendChild(saveBtn);
+    actions.appendChild(removeBtn);
+
+    body.appendChild(contentGroup);
+    body.appendChild(actions);
+
+    box.appendChild(head);
+    box.appendChild(body);
+
+    const toggleBody = () => {
+      const nowOpen = box.dataset.open !== '1';
+      box.dataset.open = nowOpen ? '1' : '0';
+      body.style.display = nowOpen ? 'grid' : 'none';
+      chev.textContent = nowOpen ? '⌃' : '⌄';
+    };
+
+    head.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      toggleBody();
+    });
+
+    box.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      if (e.target.closest('.content-group')) return;
+      if (e.target.closest('.sticky-item-head')) return;
+      const nowOpen = box.dataset.open !== '1';
+      box.dataset.open = nowOpen ? '1' : '0';
+      body.style.display = nowOpen ? 'grid' : 'none';
+      chev.textContent = nowOpen ? '⌃' : '⌄';
+    });
+
+    stickyList.appendChild(box);
+  });
+}
+
+function render() {
+  const filtered = getFilteredData();
+  results.innerHTML = '';
+  countBadge.textContent = `${filtered.length} mục`;
+  modeBadge.textContent = compactMode ? 'Chế độ rút gọn' : 'Chế độ mở rộng';
+  toggleModeBtn.textContent = compactMode ? 'Mở rộng tất cả' : 'Rút gọn tất cả';
+
+  const systemLabel = systemSelect.value || 'Tất cả nhóm lỗi';
+  const groupLabel = groupSelect.value || 'Tất cả cách xử lý';
+  resultsTitle.textContent = `Đang xem: ${systemLabel} / ${groupLabel}`;
+
+  if (!filtered.length) {
+    results.innerHTML = '<div class="empty">Không có dữ liệu phù hợp với bộ lọc hiện tại.</div>';
+    return;
+  }
+
+  filtered.forEach((item, index) => {
+    const isOpen = !compactMode;
+    const split = splitContent(item.content);
+
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.style.animationDelay = `${Math.min(index * 45, 280)}ms`;
+    card.dataset.open = isOpen ? '1' : '0';
+    card.dataset.tone = getCategoryTone(item);
+
+    const top = document.createElement('div');
+    top.className = 'card-top';
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'title-wrap';
+
+    const chev = document.createElement('div');
+    chev.className = 'chev';
+    chev.textContent = '⌄';
+
+    const h4 = document.createElement('h4');
+    h4.className = 'title';
+    h4.textContent = item.title;
+
+    titleWrap.appendChild(chev);
+    titleWrap.appendChild(h4);
+
+    const tags = document.createElement('div');
+    tags.className = 'mini-tags';
+    [item.system, item.group].forEach(tagText => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = tagText;
+      tags.appendChild(tag);
+    });
+
+    top.appendChild(titleWrap);
+    top.appendChild(tags);
+
+    const contentGroup = document.createElement('div');
+    contentGroup.className = 'content-group';
+    contentGroup.style.display = isOpen ? 'grid' : 'none';
+
+    const mainBlock = document.createElement('div');
+    mainBlock.className = 'copy-block';
+    const mainHead = document.createElement('div');
+    mainHead.className = 'copy-block-head';
+    const mainLabel = document.createElement('div');
+    mainLabel.className = 'copy-label';
+    mainLabel.textContent = 'Phần chính';
+    const mainCopyBtn = document.createElement('button');
+    mainCopyBtn.className = 'small ghost';
+    mainCopyBtn.type = 'button';
+    mainCopyBtn.textContent = 'Copy nội dung đăng nhóm';
+    mainHead.appendChild(mainLabel);
+    mainHead.appendChild(mainCopyBtn);
+    const mainText = document.createElement('p');
+    mainText.className = 'content';
+    mainText.textContent = split.main;
+    mainBlock.appendChild(mainHead);
+    mainBlock.appendChild(mainText);
+    attachCopyOnClick(mainBlock, split.main, 'Đã Copy nội dung đăng nhóm', item);
+    attachCopyOnClick(mainCopyBtn, split.main, 'Đã Copy nội dung đăng nhóm', item);
+    contentGroup.appendChild(mainBlock);
+
+    if (split.note) {
+      const noteBlock = document.createElement('div');
+      noteBlock.className = 'copy-block';
+      const noteHead = document.createElement('div');
+      noteHead.className = 'copy-block-head';
+      const noteLabel = document.createElement('div');
+      noteLabel.className = 'copy-label';
+      noteLabel.textContent = 'Ghi chú';
+      const noteCopyBtn = document.createElement('button');
+      noteCopyBtn.className = 'small ghost';
+      noteCopyBtn.type = 'button';
+      noteCopyBtn.textContent = 'Copy ghi chú';
+      noteHead.appendChild(noteLabel);
+      noteHead.appendChild(noteCopyBtn);
+      const noteText = document.createElement('p');
+      noteText.className = 'content';
+      noteText.textContent = split.note;
+      noteBlock.appendChild(noteHead);
+      noteBlock.appendChild(noteText);
+      attachCopyOnClick(noteBlock, split.note, 'Đã copy ghi chú', item);
+      attachCopyOnClick(noteCopyBtn, split.note, 'Đã copy ghi chú', item);
+      contentGroup.appendChild(noteBlock);
+    }
+
+    const preview = document.createElement('p');
+    preview.className = 'card-preview';
+    preview.textContent = split.main;
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      if (e.target.closest('.content-group')) return;
+      const nowOpen = card.dataset.open !== '1';
+      card.dataset.open = nowOpen ? '1' : '0';
+      contentGroup.style.display = nowOpen ? 'grid' : 'none';
+      chev.textContent = nowOpen ? '⌃' : '⌄';
+    });
+
+    const saveRow = document.createElement('div');
+    saveRow.className = 'card-actions';
+    const copyAllBtn = document.createElement('button');
+    copyAllBtn.className = 'small primary-copy';
+    copyAllBtn.type = 'button';
+    copyAllBtn.textContent = 'Copy';
+    copyAllBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      safeCopy(item.content)
+        .then(() => {
+          addRecent(item);
+          showToast('Copied');
+        })
+        .catch(() => showToast('Copy thất bại'));
+    });
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'small ghost';
+    saveBtn.type = 'button';
+    saveBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addSticky(item);
+    });
+    const pinBtn = document.createElement('button');
+    pinBtn.className = 'small ghost';
+    pinBtn.type = 'button';
+    pinBtn.textContent = '⌖ Pin';
+    pinBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!isStickySaved(item)) addSticky(item);
+      setTab('mine');
+    });
+    saveRow.appendChild(copyAllBtn);
+    saveRow.appendChild(saveBtn);
+    saveRow.appendChild(pinBtn);
+
+    card.appendChild(top);
+    card.appendChild(preview);
+    card.appendChild(contentGroup);
+    card.appendChild(saveRow);
+    results.appendChild(card);
+  });
+}
+
+function setTab(tab) {
+  currentTab = tab;
+  localStorage.setItem(TAB_KEY, tab);
+
+  tabMain.classList.toggle('active', tab === 'main');
+  tabMine.classList.toggle('active', tab === 'mine');
+  tabRecent.classList.toggle('active', tab === 'recent');
+  tabRules.classList.toggle('active', tab === 'rules');
+
+  mainArea.style.display = tab === 'main' ? 'block' : 'none';
+  mineArea.style.display = tab === 'mine' ? 'block' : 'none';
+  recentArea.style.display = tab === 'recent' ? 'block' : 'none';
+  rulesArea.style.display = tab === 'rules' ? 'block' : 'none';
+
+  if (tab === 'main') {
+    render();
+  } else if (tab === 'mine') {
+    renderSticky();
+  } else if (tab === 'recent') {
+    renderRecent();
+  } else if (tab === 'rules') {
+    renderRules();
+  }
+}
+
+function initializeWithData(arr) {
+  data = Array.isArray(arr) && arr.length ? arr : DEFAULT_DATA.slice();
+  populateSystemOptions();
+  populateGroupOptions();
+  renderCategoryNav();
+  renderSticky();
+  renderRecent();
+  updateDashboardCounts();
+  setTab(currentTab);
+}
+
+tabMain.addEventListener('click', () => setTab('main'));
+tabMine.addEventListener('click', () => setTab('mine'));
+tabRecent.addEventListener('click', () => setTab('recent'));
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+toggleModeBtn.addEventListener('click', () => {
+  compactMode = !compactMode;
+  localStorage.setItem(MODE_KEY, compactMode ? 'compact' : 'expanded');
+  render();
+});
+
+clearFiltersBtn.addEventListener('click', () => {
+  searchBox.value = '';
+  systemSelect.value = '';
+  populateGroupOptions();
+  groupSelect.value = '';
+  document.querySelectorAll('.category-button').forEach(item => item.classList.remove('active'));
+  render();
+});
+
+stickyModeBtn.addEventListener('click', () => {
+  stickyCompactMode = !stickyCompactMode;
+  localStorage.setItem('risk_manager_sticky_mode_v1', stickyCompactMode ? 'compact' : 'expanded');
+  renderSticky();
+});
+
+clearStickyBtn.addEventListener('click', clearSticky);
+
+systemSelect.addEventListener('change', () => {
+  populateGroupOptions();
+  document.querySelectorAll('.category-button').forEach(item => item.classList.toggle('active', item.dataset.value === systemSelect.value));
+  render();
+});
+
+groupSelect.addEventListener('change', render);
+searchBox.addEventListener('input', render);
+document.addEventListener('keydown', (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault();
+    setTab('main');
+    searchBox.focus();
+    searchBox.select();
+  }
+});
+
+(function runBasicChecks() {
+  console.assert(typeof safeCopy === 'function', 'safeCopy should be defined');
+  console.assert(Array.isArray(DEFAULT_DATA) && DEFAULT_DATA.length > 0, 'DEFAULT_DATA should not be empty');
+})();
+
+initTheme();
+loadSticky();
+loadRecent();
+initializeWithData(DEFAULT_DATA);
+
+rulesData = Array.isArray(window.RULES_DATA) ? window.RULES_DATA : [];
+renderRules();
+
+fetch('./data.json', { cache: 'no-store' })
+  .then(r => {
+    if (!r.ok) throw new Error('data.json not found');
+    return r.json();
+  })
+  .then(arr => initializeWithData(arr))
+  .catch(() => {});
 </script>
 </body>
 </html>
