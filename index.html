@@ -918,6 +918,232 @@
       .mini-tags { justify-content: flex-end; }
       .toast { right: 14px; bottom: 14px; left: 14px; text-align: center; }
     }
+
+    /* UI motion layer — presentation only, no business logic changes */
+    :root {
+      --motion-fast: 180ms;
+      --motion-base: 250ms;
+      --motion-ease: cubic-bezier(.2, .8, .2, 1);
+      --dashboard-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+      --dashboard-shadow-hover: 0 16px 40px rgba(37, 99, 235, .12);
+    }
+
+    /* Card title occupies its own row; long tags wrap below it. */
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      margin-bottom: 10px;
+    }
+
+    .card-top .title-wrap {
+      width: 100%;
+      min-width: 0;
+      align-items: flex-start;
+    }
+
+    .card-top .title {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .card-top .mini-tags {
+      width: 100%;
+      min-width: 0;
+      padding-left: 36px;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .card-top .tag {
+      max-width: 100%;
+      line-height: 1.35;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .card,
+    .sticky-item {
+      transition:
+        transform var(--motion-base) var(--motion-ease),
+        box-shadow var(--motion-base) var(--motion-ease),
+        border-color var(--motion-base) var(--motion-ease),
+        background-color var(--motion-base) var(--motion-ease);
+      will-change: transform;
+    }
+
+    .card::before,
+    .sticky-item::before {
+      transition:
+        background-color var(--motion-base) var(--motion-ease),
+        box-shadow var(--motion-base) var(--motion-ease),
+        filter var(--motion-base) var(--motion-ease);
+    }
+
+    .card:hover,
+    .sticky-item:hover {
+      transform: translate3d(0, -5px, 0);
+      border-color: color-mix(in srgb, var(--tone, var(--accent)) 60%, var(--border));
+      background-color: color-mix(in srgb, var(--card-bg) 97%, var(--accent) 3%);
+      box-shadow: var(--dashboard-shadow-hover);
+    }
+
+    .card:hover::before,
+    .sticky-item:hover::before {
+      filter: brightness(1.12) saturate(1.08);
+      box-shadow: 3px 0 14px var(--tone-soft, var(--accent-soft));
+    }
+
+    .chev,
+    .sticky-chevron {
+      transition:
+        transform var(--motion-base) var(--motion-ease),
+        background-color var(--motion-fast) ease,
+        box-shadow var(--motion-fast) ease;
+    }
+
+    .card:hover .chev,
+    .sticky-item:hover .sticky-chevron {
+      box-shadow: 0 5px 14px var(--tone-soft, var(--accent-soft));
+    }
+
+    button,
+    .tag,
+    .stat-card,
+    .badge,
+    .category-button,
+    .tab-btn,
+    .copy-block {
+      transition:
+        transform var(--motion-fast) var(--motion-ease),
+        box-shadow var(--motion-base) var(--motion-ease),
+        border-color var(--motion-fast) ease,
+        background-color var(--motion-fast) ease,
+        color var(--motion-fast) ease;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, .16);
+    }
+
+    button:active {
+      transform: scale(.97);
+      transition-duration: 90ms;
+    }
+
+    .tag {
+      cursor: default;
+      transform-origin: center;
+    }
+
+    .tag:hover {
+      transform: scale(1.02);
+      background-color: color-mix(in srgb, var(--tone-soft, var(--accent-soft)) 82%, var(--tone, var(--accent)) 18%);
+      box-shadow: 0 5px 14px var(--tone-soft, var(--accent-soft));
+    }
+
+    .category-button {
+      position: relative;
+      overflow: hidden;
+      border-left: 3px solid transparent;
+    }
+
+    .category-button:hover {
+      transform: translateX(2px);
+      border-left-color: color-mix(in srgb, var(--accent) 55%, transparent);
+      background-color: color-mix(in srgb, var(--accent-soft) 72%, transparent);
+    }
+
+    .category-button.active {
+      border-left-color: var(--accent);
+      background-color: var(--accent-soft);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+
+    .search-wrap input {
+      transition:
+        border-color 200ms ease,
+        box-shadow 200ms ease,
+        background-color 200ms ease;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      background-color: var(--bg-soft);
+      box-shadow: 0 0 0 4px var(--accent-soft), 0 10px 28px rgba(37, 99, 235, .10);
+    }
+
+    .stat-card,
+    .page-heading,
+    .filter-bar {
+      transition:
+        transform var(--motion-base) var(--motion-ease),
+        box-shadow var(--motion-base) var(--motion-ease),
+        border-color var(--motion-base) var(--motion-ease);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+      box-shadow: var(--dashboard-shadow);
+    }
+
+    .card-actions,
+    .sticky-actions {
+      transition: border-color var(--motion-base) ease;
+    }
+
+    .ui-motion-content {
+      overflow: hidden;
+      transform-origin: top center;
+      transition:
+        max-height var(--motion-base) var(--motion-ease),
+        opacity 220ms ease,
+        transform var(--motion-base) var(--motion-ease),
+        margin-top var(--motion-base) var(--motion-ease);
+      will-change: max-height, opacity, transform;
+    }
+
+    .is-copied {
+      color: #fff !important;
+      border-color: #10b981 !important;
+      background: #10b981 !important;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, .20) !important;
+    }
+
+    .card,
+    .card-top,
+    .sticky-item-head,
+    button,
+    select,
+    .category-button,
+    .tab-btn,
+    .copy-block {
+      cursor: pointer;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .sticky-item,
+      button,
+      .tag,
+      .category-button,
+      .search-wrap input,
+      .ui-motion-content {
+        transition: none !important;
+        transform: none !important;
+        animation: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1897,6 +2123,129 @@ fetch('./data.json', { cache: 'no-store' })
   })
   .then(arr => initializeWithData(arr))
   .catch(() => {});
+</script>
+
+<script>
+/* Presentation enhancer: animation and visual copy feedback only. */
+(() => {
+  const MOTION_MS = 250;
+  const trackedCards = new WeakSet();
+  let pendingCopyButton = null;
+  let pendingCopyTimer = 0;
+
+  function getAnimatedContent(container) {
+    if (container.classList.contains('sticky-item')) {
+      return container.querySelector('.sticky-item-body');
+    }
+    return container.querySelector(':scope > .content-group');
+  }
+
+  function setExpandedState(container, content, expanded, animate) {
+    content.classList.add('ui-motion-content');
+    content.getAnimations?.().forEach(animation => animation.cancel());
+    clearTimeout(content._uiMotionTimer);
+
+    if (!animate) {
+      content.style.display = expanded ? 'grid' : 'none';
+      content.style.maxHeight = expanded ? 'none' : '0px';
+      content.style.opacity = expanded ? '1' : '0';
+      content.style.transform = expanded ? 'translate3d(0,0,0)' : 'translate3d(0,-6px,0)';
+      return;
+    }
+
+    if (expanded) {
+      content.style.display = 'grid';
+      content.style.maxHeight = '0px';
+      content.style.opacity = '0';
+      content.style.transform = 'translate3d(0,-6px,0)';
+      content.getBoundingClientRect();
+      content.style.maxHeight = `${content.scrollHeight}px`;
+      content.style.opacity = '1';
+      content.style.transform = 'translate3d(0,0,0)';
+      content._uiMotionTimer = setTimeout(() => {
+        if (container.dataset.open === '1') content.style.maxHeight = 'none';
+      }, MOTION_MS);
+      return;
+    }
+
+    content.style.display = 'grid';
+    content.style.maxHeight = `${content.scrollHeight}px`;
+    content.style.opacity = '1';
+    content.style.transform = 'translate3d(0,0,0)';
+    content.getBoundingClientRect();
+    content.style.maxHeight = '0px';
+    content.style.opacity = '0';
+    content.style.transform = 'translate3d(0,-6px,0)';
+    content._uiMotionTimer = setTimeout(() => {
+      if (container.dataset.open !== '1') content.style.display = 'none';
+    }, MOTION_MS);
+  }
+
+  function enhanceCard(container) {
+    if (trackedCards.has(container)) return;
+    const content = getAnimatedContent(container);
+    if (!content) return;
+
+    trackedCards.add(container);
+    setExpandedState(container, content, container.dataset.open === '1', false);
+
+    new MutationObserver(() => {
+      setExpandedState(container, content, container.dataset.open === '1', true);
+    }).observe(container, { attributes: true, attributeFilter: ['data-open'] });
+  }
+
+  function scanCards(root = document) {
+    root.querySelectorAll?.('.card, .sticky-item').forEach(enhanceCard);
+  }
+
+  new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        if (node.matches?.('.card, .sticky-item')) enhanceCard(node);
+        scanCards(node);
+      });
+    });
+  }).observe(document.body, { childList: true, subtree: true });
+
+  document.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (!button || !/\bcopy\b/i.test(button.textContent)) return;
+    pendingCopyButton = button;
+    clearTimeout(pendingCopyTimer);
+    pendingCopyTimer = setTimeout(() => {
+      pendingCopyButton = null;
+    }, 1200);
+  }, true);
+
+  const toastElement = document.getElementById('toast');
+  if (toastElement) {
+    new MutationObserver(() => {
+      const succeeded = toastElement.classList.contains('show') &&
+        /copied|đã\s*copy|đã\s*Copy/i.test(toastElement.textContent);
+      if (!succeeded || !pendingCopyButton) return;
+
+      const button = pendingCopyButton;
+      pendingCopyButton = null;
+      const originalText = button.textContent;
+      button.textContent = '✔ Copied';
+      button.classList.add('is-copied');
+      clearTimeout(button._copyFeedbackTimer);
+      button._copyFeedbackTimer = setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('is-copied');
+      }, 1000);
+    }).observe(toastElement, {
+      attributes: true,
+      childList: true,
+      characterData: true,
+      subtree: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  scanCards();
+})();
 </script>
 </body>
 </html>
