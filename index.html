@@ -1157,9 +1157,9 @@
         </div>
       </div>
       <div class="header-stats" aria-label="Thống kê nhanh">
-        <div class="stat-card"><span>Tổng template</span><strong id="totalBadge">0</strong></div>
-        <div class="stat-card"><span>Favorite</span><strong id="favoriteCount">0</strong></div>
-        <div class="stat-card"><span>Recent</span><strong id="recentCount">0</strong></div>
+        <div class="stat-card"><span>Cẩm Nang Xử Lý 🎯</span><strong id="totalBadge">0</strong></div>
+        <div class="stat-card"><span>Bộ Sưu Tập ❤️</span><strong id="favoriteCount">0</strong></div>
+        <div class="stat-card"><span>Mục Gần Đây 🔖</span><strong id="recentCount">0</strong></div>
         <button id="themeToggle" class="theme-toggle icon-button" type="button" aria-label="Đổi giao diện">◐</button>
       </div>
     </header>
@@ -1167,10 +1167,10 @@
     <div class="workspace">
       <aside class="sidebar">
         <nav class="side-nav" aria-label="Điều hướng">
-          <button id="tabMain" class="tab-btn active" type="button"><span>⌂</span>Tất cả template</button>
-          <button id="tabMine" class="tab-btn" type="button"><span>★</span>Favorite</button>
-          <button id="tabRecent" class="tab-btn" type="button"><span>◷</span>Recent</button>
-          <button id="tabRules" class="tab-btn" type="button"><span>✓</span>Hướng dẫn nghiệp vụ</button>
+          <button id="tabMain" class="tab-btn active" type="button"><span>⌂</span>Cẩm Nang Xử Lý 🎯</button>
+          <button id="tabMine" class="tab-btn" type="button"><span>★</span>Bộ Sưu Tập ❤️</button>
+          <button id="tabRecent" class="tab-btn" type="button"><span>◷</span>Mục Gần Đây 🔖</button>
+          <button id="tabRules" class="tab-btn" type="button"><span>✓</span>Hướng dẫn nghiệp vụ 🌟</button>
         </nav>
         <div class="sidebar-label">Category</div>
         <div id="categoryList" class="category-list"></div>
@@ -1221,7 +1221,7 @@
         </div>
 
         <div id="mineArea" style="display:none;">
-          <div class="page-heading"><div><div class="eyebrow">BỘ SƯU TẬP</div><h2>Favorite</h2><p>Nội dung bạn đã lưu để truy cập nhanh.</p></div></div>
+          <div class="page-heading"><div><div class="eyebrow">BỘ SƯU TẬP</div><h2>Nội Dung Đã Sưu Tập</h2><p>Nội dung bạn đã lưu để truy cập nhanh.</p></div></div>
           <div class="results-head">
             <div class="results-title">Danh sách yêu thích</div>
             <div class="view-actions">
@@ -1540,7 +1540,7 @@ function renderRecent() {
     const favoriteBtn = document.createElement('button');
     favoriteBtn.className = 'small ghost';
     favoriteBtn.type = 'button';
-    favoriteBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
+    favoriteBtn.textContent = isStickySaved(item) ? '★ Đã Sưu Tập' : '☆ Sưu Tập';
     favoriteBtn.addEventListener('click', () => addSticky(item));
 
     actions.appendChild(copyBtn);
@@ -1992,7 +1992,7 @@ function render() {
     const saveBtn = document.createElement('button');
     saveBtn.className = 'small ghost';
     saveBtn.type = 'button';
-    saveBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
+    saveBtn.textContent = isStickySaved(item) ? '★ Đã Sưu Tập' : '☆ Sưu Tập';
     saveBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       addSticky(item);
