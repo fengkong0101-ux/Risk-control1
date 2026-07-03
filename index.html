@@ -1144,24 +1144,730 @@
         animation: none !important;
       }
     }
+
+    /* =========================================================
+       RISK MANAGER PREMIUM DESIGN SYSTEM
+       Final visual layer. Existing component classes and logic
+       remain the source of truth.
+       ========================================================= */
+    :root {
+      /* Brand */
+      --ds-primary: #2563eb;
+      --ds-secondary: #6366f1;
+      --ds-accent: #06b6d4;
+      --ds-success: #22c55e;
+      --ds-warning: #f59e0b;
+      --ds-danger: #ef4444;
+
+      /* Neutral surfaces */
+      --ds-bg: #f8fafc;
+      --ds-surface: rgba(255, 255, 255, .78);
+      --ds-surface-solid: #ffffff;
+      --ds-surface-muted: rgba(248, 250, 252, .82);
+      --ds-text: #0f172a;
+      --ds-text-muted: #64748b;
+      --ds-line: rgba(148, 163, 184, .20);
+      --ds-line-strong: rgba(99, 102, 241, .28);
+
+      /* Spacing */
+      --space-1: 8px;
+      --space-2: 12px;
+      --space-3: 16px;
+      --space-4: 20px;
+      --space-5: 24px;
+      --space-6: 32px;
+
+      /* Shape + depth */
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --shadow-xs: 0 2px 8px rgba(15, 23, 42, .04);
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .07);
+      --shadow-md: 0 16px 40px rgba(37, 99, 235, .12);
+      --shadow-glass: 0 24px 64px rgba(15, 23, 42, .10);
+
+      /* Map the existing UI contract to the design system. */
+      --bg: var(--ds-bg);
+      --bg-soft: var(--ds-surface-solid);
+      --panel: var(--ds-surface);
+      --panel-2: var(--ds-surface-muted);
+      --text: var(--ds-text);
+      --muted: var(--ds-text-muted);
+      --border: var(--ds-line);
+      --border-2: var(--ds-line-strong);
+      --accent: var(--ds-primary);
+      --accent-2: var(--ds-secondary);
+      --accent-soft: rgba(37, 99, 235, .09);
+      --card-bg: rgba(255, 255, 255, .88);
+      --block-bg: rgba(248, 250, 252, .88);
+      --shadow: var(--shadow-sm);
+      --shadow-strong: var(--shadow-md);
+    }
+
+    [data-theme="dark"] {
+      --ds-bg: #0f172a;
+      --ds-surface: rgba(15, 23, 42, .72);
+      --ds-surface-solid: #111c31;
+      --ds-surface-muted: rgba(30, 41, 59, .72);
+      --ds-text: #f1f5f9;
+      --ds-text-muted: #94a3b8;
+      --ds-line: rgba(148, 163, 184, .16);
+      --ds-line-strong: rgba(129, 140, 248, .32);
+      --shadow-xs: 0 2px 10px rgba(0, 0, 0, .16);
+      --shadow-sm: 0 12px 30px rgba(0, 0, 0, .22);
+      --shadow-md: 0 18px 46px rgba(37, 99, 235, .15);
+      --shadow-glass: 0 26px 70px rgba(0, 0, 0, .30);
+
+      --bg: var(--ds-bg);
+      --bg-soft: var(--ds-surface-solid);
+      --panel: var(--ds-surface);
+      --panel-2: var(--ds-surface-muted);
+      --text: var(--ds-text);
+      --muted: var(--ds-text-muted);
+      --border: var(--ds-line);
+      --border-2: var(--ds-line-strong);
+      --accent: #60a5fa;
+      --accent-2: #818cf8;
+      --accent-soft: rgba(96, 165, 250, .12);
+      --card-bg: rgba(17, 28, 49, .84);
+      --block-bg: rgba(15, 23, 42, .74);
+    }
+
+    html {
+      background: var(--ds-bg);
+    }
+
+    body {
+      position: relative;
+      isolation: isolate;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 8% -8%, rgba(37, 99, 235, .10), transparent 64%),
+        radial-gradient(760px 500px at 92% 4%, rgba(99, 102, 241, .09), transparent 62%),
+        radial-gradient(680px 480px at 54% 102%, rgba(6, 182, 212, .07), transparent 64%),
+        linear-gradient(145deg, #f8fafc 0%, #f4f7fb 48%, #f7f7ff 100%);
+      background-attachment: fixed;
+    }
+
+    [data-theme="dark"] body {
+      background:
+        radial-gradient(900px 560px at 4% -8%, rgba(37, 99, 235, .16), transparent 66%),
+        radial-gradient(780px 520px at 96% 0%, rgba(99, 102, 241, .14), transparent 64%),
+        radial-gradient(700px 500px at 55% 105%, rgba(6, 182, 212, .09), transparent 65%),
+        linear-gradient(145deg, #0b1220 0%, #0f172a 48%, #111827 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: .025;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      mix-blend-mode: multiply;
+    }
+
+    [data-theme="dark"] body::before {
+      opacity: .035;
+      mix-blend-mode: soft-light;
+    }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Glass header */
+    .app-header {
+      min-height: 78px;
+      padding: var(--space-2) 28px;
+      border-bottom: 1px solid var(--border);
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, .86), rgba(255, 255, 255, .68)),
+        var(--panel);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .76), 0 10px 32px rgba(15, 23, 42, .05);
+      backdrop-filter: blur(22px) saturate(145%);
+      -webkit-backdrop-filter: blur(22px) saturate(145%);
+    }
+
+    [data-theme="dark"] .app-header {
+      background:
+        linear-gradient(120deg, rgba(15, 23, 42, .88), rgba(30, 41, 59, .68)),
+        var(--panel);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .025), 0 14px 38px rgba(0, 0, 0, .18);
+    }
+
+    .brand {
+      min-width: 300px;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 58px;
+      overflow: visible;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .brand-copy {
+      min-width: 0;
+      min-height: 58px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-title {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 9px;
+      margin-top: 5px;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .brand-release {
+      position: relative;
+      padding-left: 9px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .brand-release::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: currentColor;
+      transform: translateY(-50%);
+    }
+
+    .header-stats {
+      min-height: 48px;
+      align-items: stretch;
+      gap: var(--space-1);
+    }
+
+    .stat-card {
+      min-width: 110px;
+      min-height: 48px;
+      border-color: var(--border);
+      border-radius: var(--radius-md);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .50), transparent),
+        var(--panel-2);
+      box-shadow: var(--shadow-xs);
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-card span,
+    .stat-card strong {
+      display: flex;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .stat-card strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .app-header .icon-button {
+      width: 48px;
+      height: 48px;
+      min-height: 48px;
+      flex: 0 0 48px;
+    }
+
+    [data-theme="dark"] .stat-card {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .035), transparent),
+        var(--panel-2);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      padding: var(--space-4) 14px;
+      border-right: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(248, 250, 252, .60)),
+        var(--panel);
+      box-shadow: 10px 0 38px rgba(15, 23, 42, .035);
+      backdrop-filter: blur(22px) saturate(135%);
+      -webkit-backdrop-filter: blur(22px) saturate(135%);
+    }
+
+    [data-theme="dark"] .sidebar {
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, .80), rgba(15, 23, 42, .66)),
+        var(--panel);
+      box-shadow: 10px 0 38px rgba(0, 0, 0, .15);
+    }
+
+    .sidebar .tab-btn,
+    .category-button {
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    .sidebar .tab-btn:hover,
+    .sidebar .tab-btn.active,
+    .category-button:hover,
+    .category-button.active {
+      background:
+        linear-gradient(90deg, rgba(37, 99, 235, .11), rgba(99, 102, 241, .07));
+    }
+
+    .sidebar .tab-btn.active,
+    .category-button.active {
+      color: var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .10), 0 5px 16px rgba(37, 99, 235, .07);
+    }
+
+    .sidebar-label {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .14em;
+    }
+
+    .sidebar-tip {
+      border-color: var(--border);
+      background:
+        linear-gradient(145deg, rgba(37, 99, 235, .06), rgba(99, 102, 241, .035)),
+        var(--panel-2);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* Content + aurora hero */
+    .main-content {
+      padding: var(--space-6) clamp(22px, 4vw, 58px) 64px;
+    }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      align-items: center;
+      margin-bottom: var(--space-4);
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(125deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .48)),
+        var(--panel);
+      box-shadow: var(--shadow-glass);
+      backdrop-filter: blur(20px) saturate(130%);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 320px;
+      height: 240px;
+      border-radius: 50%;
+      filter: blur(54px);
+      pointer-events: none;
+    }
+
+    .hero::before {
+      top: -150px;
+      left: -60px;
+      background: rgba(37, 99, 235, .13);
+    }
+
+    .hero::after {
+      right: -70px;
+      bottom: -170px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, .12), rgba(6, 182, 212, .09));
+    }
+
+    [data-theme="dark"] .hero {
+      background:
+        linear-gradient(125deg, rgba(30, 41, 59, .76), rgba(15, 23, 42, .66)),
+        var(--panel);
+    }
+
+    .hero h1 {
+      color: var(--text);
+      background: linear-gradient(100deg, #1d4ed8 0%, #6366f1 48%, #2563eb 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      letter-spacing: -.045em;
+    }
+
+    [data-theme="dark"] .hero h1 {
+      background: linear-gradient(100deg, #93c5fd 0%, #a5b4fc 50%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: .16em;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* Input + search component */
+    input,
+    select {
+      border-color: var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .44), transparent),
+        var(--bg-soft);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), var(--shadow-xs);
+      font-weight: 500;
+    }
+
+    [data-theme="dark"] input,
+    [data-theme="dark"] select {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .025), transparent),
+        var(--bg-soft);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035), var(--shadow-xs);
+    }
+
+    .search-wrap input {
+      height: 60px;
+      border-radius: var(--radius-md);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .60), transparent),
+        var(--bg-soft);
+      box-shadow: 0 12px 34px rgba(15, 23, 42, .08);
+    }
+
+    .search-wrap input:focus,
+    input:focus,
+    select:focus {
+      border-color: rgba(37, 99, 235, .65);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, .10), 0 14px 34px rgba(37, 99, 235, .10);
+    }
+
+    kbd {
+      border-color: var(--border);
+      color: var(--muted);
+      background: var(--panel-2);
+      box-shadow: 0 2px 0 rgba(148, 163, 184, .16);
+    }
+
+    .filter-bar {
+      padding: var(--space-3);
+      border-color: var(--border);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .50), transparent),
+        var(--panel);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(18px);
+    }
+
+    [data-theme="dark"] .filter-bar {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .025), transparent),
+        var(--panel);
+    }
+
+    /* Card component */
+    .card,
+    .sticky-item {
+      isolation: isolate;
+      padding: var(--space-4);
+      border-color: var(--border);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .52), transparent 52%),
+        var(--card-bg);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(16px) saturate(125%);
+      -webkit-backdrop-filter: blur(16px) saturate(125%);
+    }
+
+    [data-theme="dark"] .card,
+    [data-theme="dark"] .sticky-item {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .035), transparent 52%),
+        var(--card-bg);
+    }
+
+    .card:hover,
+    .sticky-item:hover {
+      border-color: color-mix(in srgb, var(--tone, var(--accent)) 46%, var(--border));
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .64), transparent 54%),
+        color-mix(in srgb, var(--card-bg) 98%, var(--accent) 2%);
+      box-shadow:
+        0 18px 44px rgba(37, 99, 235, .11),
+        0 5px 18px rgba(99, 102, 241, .07);
+    }
+
+    [data-theme="dark"] .card:hover,
+    [data-theme="dark"] .sticky-item:hover {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .05), transparent 54%),
+        color-mix(in srgb, var(--card-bg) 97%, var(--accent) 3%);
+    }
+
+    .card-top {
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    .title,
+    .sticky-item-title {
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -.018em;
+    }
+
+    .card-preview,
+    .content,
+    .sticky-item-content {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .copy-block {
+      padding: var(--space-2);
+      border-color: var(--border);
+      border-radius: var(--radius-md);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .38), transparent),
+        var(--block-bg);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38);
+    }
+
+    [data-theme="dark"] .copy-block {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025);
+    }
+
+    /* Tag + badge components */
+    .tag,
+    .badge {
+      border: 1px solid color-mix(in srgb, var(--tone, var(--accent)) 14%, var(--border));
+      color: var(--tone, var(--accent));
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .36), transparent),
+        var(--tone-soft, var(--accent-soft));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .40), 0 4px 12px rgba(15, 23, 42, .035);
+      backdrop-filter: blur(10px);
+      font-weight: 600;
+    }
+
+    [data-theme="dark"] .tag,
+    [data-theme="dark"] .badge {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035), 0 5px 14px rgba(0, 0, 0, .10);
+    }
+
+    /* Button system */
+    button {
+      min-height: 38px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--ds-primary), var(--ds-secondary));
+      box-shadow: 0 8px 20px rgba(37, 99, 235, .18);
+      font-weight: 600;
+    }
+
+    button:hover {
+      border-color: rgba(255, 255, 255, .26);
+      box-shadow: 0 11px 26px rgba(37, 99, 235, .22);
+    }
+
+    .ghost,
+    .theme-toggle,
+    .tab-btn {
+      border-color: var(--border);
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .45), transparent),
+        var(--panel-2);
+      box-shadow: var(--shadow-xs);
+    }
+
+    [data-theme="dark"] .ghost,
+    [data-theme="dark"] .theme-toggle,
+    [data-theme="dark"] .tab-btn {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .025), transparent),
+        var(--panel-2);
+    }
+
+    .ghost:hover,
+    .theme-toggle:hover {
+      border-color: rgba(37, 99, 235, .34);
+      color: var(--accent);
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(99, 102, 241, .06)),
+        var(--panel-2);
+    }
+
+    .danger {
+      color: var(--ds-danger);
+    }
+
+    .is-copied {
+      border-color: rgba(34, 197, 94, .55) !important;
+      background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    }
+
+    /* Toast */
+    .toast {
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, .10);
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, .90);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, .22);
+      backdrop-filter: blur(18px);
+      font-weight: 600;
+    }
+
+    /* Secondary pages */
+    .page-heading {
+      overflow: hidden;
+      border-color: var(--border);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(400px 160px at 95% 0%, rgba(99, 102, 241, .10), transparent 66%),
+        linear-gradient(135deg, rgba(37, 99, 235, .07), rgba(6, 182, 212, .035)),
+        var(--panel);
+      box-shadow: var(--shadow-glass);
+      backdrop-filter: blur(18px);
+    }
+
+    .empty {
+      border-color: var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+    }
+
+    /* Premium 25ms stagger, capped to avoid long waits on large data sets. */
+    .grid > .card:nth-child(1) { animation-delay: 0ms !important; }
+    .grid > .card:nth-child(2) { animation-delay: 25ms !important; }
+    .grid > .card:nth-child(3) { animation-delay: 50ms !important; }
+    .grid > .card:nth-child(4) { animation-delay: 75ms !important; }
+    .grid > .card:nth-child(5) { animation-delay: 100ms !important; }
+    .grid > .card:nth-child(6) { animation-delay: 125ms !important; }
+    .grid > .card:nth-child(7) { animation-delay: 150ms !important; }
+    .grid > .card:nth-child(8) { animation-delay: 175ms !important; }
+    .grid > .card:nth-child(9) { animation-delay: 200ms !important; }
+    .grid > .card:nth-child(10) { animation-delay: 225ms !important; }
+    .grid > .card:nth-child(11) { animation-delay: 250ms !important; }
+    .grid > .card:nth-child(n+12) { animation-delay: 275ms !important; }
+
+    @media (max-width: 760px) {
+      .brand {
+        min-width: 0;
+        gap: 10px;
+      }
+
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+        flex-basis: 48px;
+      }
+
+      .brand-copy {
+        min-height: 48px;
+      }
+
+      .brand-title {
+        font-size: 16px;
+      }
+
+      .brand-subtitle {
+        display: none;
+      }
+
+      .brand-release {
+        padding-left: 0;
+      }
+
+      .brand-release::before {
+        display: none;
+      }
+
+      .hero {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+      }
+
+      .main-content {
+        padding: var(--space-5) 14px 48px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .grid > .card {
+        animation-delay: 0ms !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header class="app-header">
       <div class="brand">
-        <div class="brand-mark">
-    <img src="https://i.ibb.co/Kcyynvwn/08-36-39-3-thg-7-2026-removebg-preview.png" alt="REN Logo">
-</div>
-        <div>
-          <div class="brand-title">Risk Manager - Quản Lý Rủi Ro </div>
-          <div class="brand-version">Professional Dashboard <span>Version 3.0</span></div>
+        <div class="brand-logo" aria-hidden="true">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAQAElEQVR4Aex6CZSU1Zn2c7/a196r926afV9kdSEoiKgIGhUURFTUEPeMx9FEkSg6SYyR6D8a12gUcUVxQSMKiAIi+9ZAs/S+VnfXvld9Vfd/PnI8mZkTbASdOTOxzr1U9Xfvfe97n/e97/ah4J/88yMA/+QKgB814EcN+CdH4H/kCuzfv3/Itm1fT/3y8zWXbFi/9qc7vvhi8tE9e1z/E7L4wQHgYe1vvfHGz+775d2vzp01q3rqpEmh2xYurP7lnf/66X1337Pyl/9y57u33X7r2mvmz3dPGT8+eun5047cddut76x4/fXbudb4Q4PygwHwxvLlV92wYMGaW2680bti+WvP7t+196poIDhEn4Hd5+6Ct6MD3S3tcNc3wV3XhLa6etQfOWKp3r2n76oPP7h08a8XPTH7ikvj866a88UHK1de+0MB8b0D8Pzzz186fdr525e/uvzVTFKdUuwqNLS2tKCpvgE7t+/A9i1b0e3uhL/bg+7ubsRSKaRkGmmZQTIeRzQQQqzbj1B7F7prm8TG1Wt/ctdtt7904TmTDy3/y1/mf99AfG8APPDAA8qM6dNfWvnuincKCvJG5+fmoHrPbmzcuBHV1dXooMSjoTAy6TTCoRAiwQgSaRV+kUJTNIzuRBRSKDBnBBwpAZdqQHHaBMUThIcAfrV5Y//7Hlz08qwrL9u4c+emSnxPn+8FgKW/Xzrprdde73TY7NeWFBbBS+l++N77qK+vR8DvP8aqN+hHKpNGn759kZObi0g6QakD0VgCEICalghENCDC6EwE4I35kKJ25DqzZGlOASwZBZ2NLfj8k0/PnHX5lbXPPPXEXfgePqcMwDVzr7z9zdeXrZ86ZXKeXhHYvOkrrPtsDZLJJMLhMBJqimqehF7RUcJAKB7FpVfMkuecMxUWsw22jAH5ZjvMOhOSPJBqNiFiMKANGbSKGGoDbqGSVqUjVw6w50rFH0KgoVn3u988/Ogdv7j5NS45pXZKAEybOu2xprrGJ84cPwG1hw5j3aefwd3ahiRVWwgBRVFArYDZbIaeB9NUHnodVnzwniipqsDkaVPRp3dvZFIZVFVVYSzpJKSkdqRgzncikMlAcH57xI9mT5swK3oMK6uSNKSI0ZAuf/b5OXNmXbYOp/A5aQAuvvjip0IB/50jR4xATfU+Sn4jouEQwtEITDrlmAZYLBZoam/k4UOxODLUgrROh+LKSrz46itw+zwYMGokxp51FkxOJzVEYMK48ejXpw+S0Rg4FQE1jbRRBx8PecDfKRo7WsTQsnJZIo2wxlL48tN158yaNWsNh0+qnRQAt9xyy68o8ZvHDB+O6m3bUb1rD6QmOaoqhQ4oAk6HDRJpaIc32awYMmwwxowbDX/Qh6ampmPzt2zZgj37diIpVFiyshCJq/QCMWRbnehf1QeDBw9EcakLMdJJ6WknBODhlWpu6RAuXod8YUI44MOav66actedv3j5RBD4r3O+MwCPPfnElA8/fP+hCaedhqaaQ6irPgg1GkeEh08byKRJgaTEYrT4TpsNlX17HeuOLDu6PZ0I0Rh2tLbAJBUoqgqzSU8tSdE2qDSKFliEHTKsIhIIQGSSKMzLRf++A+HIKkRUGhCHAX5kcDjQIfIL82WJyYBMOIZlLz43/9kXnv4XfMfPdwbgkd/99rUxo0fr2hsbsYPSj6hJhGQKFqMBmqEz6o3oXdkHk885D+dMPBfFRaVIqRm00JW53W6qtQ6VZeUYN3ocpk6eigH9+sFuscKoN8Gg10NNqjAZaTP0BjQ0NqOurgEKwSoqKoYzKxcg/RA1QvMthzpaRbbdJu08dCoUxeJ77390584DlfzzhJtywjM5ccpF5z9plMIV6OjCvl27kdYJdGRSCAuAsQwGFvXGRWfPwE/GTUGvikGy+mADPl29Abt2VKOz04t4LIlwOA5PIAzozCgp7wu9wQEdJesgfZuQ1IYYkoqEKSsH2XlFSKaAjrZ2tDY1oKQkHzE1giQ1LGASaOeaSCwpeucVSM1Nqr6A7te/vPsNPj7hdsIAfLT2o8qNn395Y0lOPpoOHeWBM4gzctN8eHFJAaZOmojRQwYh6fVi56YvsX/3DjGsXx/MuuBCDKAWyEgUZmrCMFr9sUOHwCjStB07sG/7ThzYuw9HDh9EMOSB0WGCNFMToIONEi+r6g17Xh6vgB0mkw7Dhw9FbkE+MvQyxAYd0SjSSSnsBNSYkvh60/oJq1aunHeiCJwwAPfdtehPuXan0dvagQQlqEggzcCmxCgwrKiQB9mMDz7+gAysRayrFjLahpqta7Hl/TcRajiMfHKUS7cWrK3DwU0bsXfT56je+RVajx5EW2sjWrqa0M3gJ6CGEcskjhnJtFAQpZapVgOcJS5onkSNpzCssj/OGX82hlQNAC0JGkPd6FNUJnVQEU9GsWjJ/Q9wuxNqyonM+vDDD62NDQ3n5mRl0XBlINIZSFr6yaefLl/4wx/kledOwU3zrsSDC6+RD869HHfPvAgXVBbj3KIsXDd0MBb2H4wb+w7F/D6DMa+yL3s55vQuwOVV+RhMqeaRiXy7DRabGdFEHMlkHOlUDF3tLWiuq0UzI8CGBs1zCGqOAd1tndi/bS9MBgt6kWaS69vcHSjMyjtmbxob6/p88s5bc/m4x6b0OIMTnn788Tuys53GSCiIOP2zyWSCLx7BV5s3iz2bN+Payy+Td9z5r3LuGT/BvP4jMd2cjQvo8+c4HLgoGcP5jA+m0qpPo+bMZA5wSTiCmdEQppHGTUMG4wyzFWlGeI2H6tDe1IKQz4tU2AddLAJLMg0rdT3bYEfYF4bP40c0EocrvxAerx+HmpugCj3aU0EhDUJaTEA8FsXSp/54K1nvsZ0QANt2br+90OWCzWyBja7NkwhAs9ga8k+9tkJcd/2N4svlb6GtvhlHaw7Sch+lKsbp12NQ6R1SZgNgt8JoN8OiV2CPJ1DsiaMkEIPJ54OT99lMVi1GCxwELRAOoLHFjUg4Ch2TJ7swIuILIMdmRyYaRJpqrsUTUXqgCDUlJlUQI6h0q7n0EkoM2Lpz24SjR/eVk+y3th4BePbZZ/MtdnthRWkZ0tzgWDir3TyTGTG9Dj7e0ff3HsLdv35I3PHAA+KWN5bjrjVrcc/6rbhl637cVH0Id9XX4bb6Q7iHtuDRrlbUO7OREjYezowwXd9OSjpCNiPJDLq7uhCjcU0bgQS5k8ggFgsiFQ2jreEQVAIQDXShO+xGZ6gTVDRyg2M97veLcqMdve00pFKKtz/8oEdjyC2487e0devW3FxYVCSQkYjRkseTCaQY4yXp9/QMcRWGfpQvRhSX4adnTJRnDeuHvMpsdGYD9VZgN4Ct7PvYD7EH2C32PCRghrTnY2tLM7IL87Dk4aW45Y47cc/iB3D3/ffivl/fjXsX3YUli/8NT/72MQwtKsDYXCfmDKjC7EG90Zt72zIqDJS+hTQHMHqcftoZOK2yH3L0FqRiaaz98vOpHPrW1iMAW7dvOddus8DLfF6Nx5DgporRiLQABDO7nFQa5+U4cd2ggTg9AzHZUYDcQBK80nDH/yZFZrqwc34hgPnFfeDyR5HSKWg2KFhPRs//2c9xxvkXyJkzZ8pLps+QV14yS86/fJ68ft718rJZs2T1ji1QO9oww1Ugz+jyYUo4JafnuWSxBIwkTqxx1cgzZXkwA39jG9x+P68JUHvw6HBu+a2tRwCCwcDYKMNaN6Myu9GMRDrJpIankRJCBcpJfgitdwHDYeEJoLO9E7U8YCINmDNAFnsZ5/SSwAU2E/oxMxTpFELZVmwLdiOfLvSsCy6UNXVHsXXHVrz99tt49533xLKXXxd/fuEvYtHi+8RrK5ZjMLcca7OJoaRXEQiL0Q6nyCFdJ3s/epA+BpuIN7XD7e2gbkILT+Dt7Mrbu3fvQHzLp0cABIQ5HgxDDUSQZbSwcEWppuJI0ZDlCqCcd3V0ZSXycwthLa/CO/VHUcsNNbWs4vd5DGju6dULj1aWYV5JCaL+VrSZYmgpsOHzaBQzZs+BThWw2gxYt+EzsXTp78TDDz2ERx55HI/+4XG8sfJtXhZgYu9KKZpbZZZUYGGG2Dc3S44y6aBFkOP6VqH14AGoNI5epITC/MBK+wRKobGxbhDZOG7rEQBJSYMb6uiOENPsPiCEYKIikW+1oHeWA/1LSpE2CtQ018sQgPHZDtw0fJT81ejTcfWY01BBZmQihQZ/EHX0Ch9SS57ZewARojTxvKkyFPRTcxrR6W5GrwEDmTwNQFV5JSqKSmDRAU7SLLVa4VCMwpNMSpXeJEG3OszlklqA5bKY4UkFcRRd0GyMVHQyw6jTZDCjs8NdwuXHbT0CAEZvKq2yXpUQqTQ97t9o2fUmjSH0ysqDLpOCzDWjqDRLPHL2WXhoyFDM6PaIQQ1HEW2uRT0juxXMFn/f5cWDLGR8RBIH2Wf/4g4Iux4+bwuy7Tpx589/hpuuW4CF8xdg9syfom9REUy8SoOLbXDoTaLZ58cnsbBoz7ajra1NDMjKEaNJJ+7xoJnBwm7+5g0hrWwhFD00g+0PBrP5+LitRwBSBCDM4EdPd2Wl8ZMaKYKRZzYiRwCDGZAgGMOuplq8uXED/rp+IzzNrbCy4uticcQQCGJ9XQu+8PpwQKdHh86GRuhh0az6pMmobW4VHo9HfPrxx1j51pvYuP4LfPzRKvz7vz9Om7D5mPTH9O2PjmAQOxMxfAmgjpWSeDx5rGA6Is8Fyd97OtzQpE+7y1Q6CIUG1uqwIxmNGrjkuK1HAFSDHjElg4iagNAL1mEAai4URnejCl2ygEXNUHM7PvhqC9aowFvc6s0uDzqys0GjjL5Z+Zhb1Utqa2Q6hXg6whkqrr5iDhz02ZI3/NO1X2HZK+/is08+x6pVq7Bx8xeICEYznDnCBDiSGXkgGMJ2QB7hs+0E1WS0ItjeJS0JAyKeKHxpIMoxTUDZDquUShpqJgmbwUKuOHCc1iMASKVhNhiRQhIOp0VYuUKL2rS7d0av3kh5gwjQA+yOpuDlJk3snzKw2ZFKotNsglYNLrZaxEWV5cgGKHseyGnH2NFjZH1tA9y8EnWM83tXVaKyogK9e/fFoKFDUVxeiBwefnRFpYx3BUVdMIAaQHQA2N7mhoe2XjUYhC+RgDsSQZDPNQvFJVATSaEoChTaHpvNrikGR/9xU/7x478/NUSSsCcljMggnYpLKsQxy3t+YRmyfAkRzwhsaWpEN5f42TUpdPH7XV839ppNstMomcvXYHpVsZxs08HKsXnz5smKXlXgixEZiwRwzdVzcO2CGzB33rW4cNpFmDh+Ii6feQl6FblQZHMi7PXDy0JJiGtVnQI3v1voYxstGbRb9dSKJDS9knzuEHrYqB0Kv4XOiJzSAg0zjvzj1iMAJkUv06xKZGj5u4JelDJfLyWtycW9ZLS+BR20EXsJjnb4MKlpAZIGgqaqGzo7hN9qgp6Wq7ZjlAAAC5FJREFUv3HjVnHN6FFyuA7Q+/ziwJ59sDqzhMVigk4n4PP54KOXyEgdXWwSezZtQTIQht7pFH69QBcdsHbIcBoIc//DsRD8BVm0B2loWqdJn4+ZrzhgUEww6s0Mkw0oq+rboD0/XleON/DN89zCgraQkoLXQSbVmKhUzHI8B4u8MZFDhKtTYWihrsaUJgGFCY3ZlnWMyf18cDgQlYrVgVKjgP5wrbhh0BBsff0NPHzvfeK3jz2GZ55/DkuXLsXKlSuPBUErV32ADevWo37HPowfPhZfd7bgq4AXzQBUCEgYkOTvQ74kfA6b3M0iipd/KzyJjt/ZOQXwM+PMzc2H2WgJjhs1ahsfH7dx2XHHjg0MGTl8V5j3Lc0EI5ICkl0BcfaQMTJKNjp0KvZGw9B0LEUpAQqsFjvyi4th5KE1lf06qoo2nUnaSstlPBhFCe3FFGceEiHfsVz/yJFatPJOa+8O292taGtvQm1bE/TCjL1H6+THNY2oSYE2CBB8ZuNLFEEQtD13drSLhlRGaODT7SObks8pKEBGr6CwsBDlJaUH0MOnRwDOm37R6jhTUqHoQBxggR6wWcUXqW682X0EO+gi07wekq7RotMjJ9uJXFcBCopLoLmkejLwQkObaMgrBiMcJPmub2yBS2rhcYFRj/ICFwpdeTSApagoL0FWQTYka34dIo0tbS1Cs2CCXJpM2s4SacYkKmlG2fd2RBAiO2kBQgL0LqtAkK/ccitKqCnA2ZMmbuC0b23Kt45ycMaMGS8qij4T40sInQWoGjlCflZTjTfa27GZNTgP58SkBHnguzwqJxnqN3AQQrTOSV6RtMMOzWj98estot5slV0U1ZHaI+Is1vp0DI4STKicOblgaAkTtSjK9wZgvqEdMASCTpDSJhPCpGe325HREQQiorNYwN3o6rhUUiYgvuWlsra1EfaSPHR7uzBp0qRVfPytrUcASkpKopPOOGdTOiaRUExYsW+n+JTG0EeyGpNWYdB0gvcTkCagzdeBAKtAnbyHDlcplNw8yEIXtMjv8V3bxB6jUcZ5P0G3NjrLjnAojBBLYNrhrEy2qgqKkefMhY6HykBBkDUCfyoNVdGhOxKESpCkQUGUuYiBPNARwMzvoVVVLKD4RSgTxeHWOs6T9VOmTNHiJo4ev/UIgLb02usX/FFmdEgZDGjKSESMClyFObTXgJNSKiLjDnJjovTj/gga6msRicSg0BJbbTmIcmbKloUGAJ/42kUdFVRT29K8nGOq29ncjNaWdiTiKkx6E3KzslFUWvy3XlEGV1kZsnmnrXxuNBohhIBKryBJj9vCZQLKSovlgSM10DTEFw1gztwrXuJwj+2EAJgzZ/bKkqqqhgCloSvIRkzokJVxYoy1UJpkHCVISwcNlSkCFNpMzMz2w0aJdTS3QEQzcDLi0+n1MPEAjWTpM68b+70eKXVGeXplL+SoCryBEBo6u9DhC0Cr/iaEikQmDi5DRiVx2hctzo9TY2QiDhNPrjFvIr3xI0aivrWZ1WQVSVaqE4lE5L77ljzEoR6bRqPHSdqE+++9f4lMqLSwRh4kF4e7WkQvBjPDrdlwJlOiv9EitfigTDHAzDAZqQCvRhxxHsxqsByTmOYp7LwOYQEczkDsqKsTDodTFjDY0XET1veRYNkthQz/ysBo1CPC4mlnVwdaW5vg93lhpPaYOK5PAU7SGd2vircpjCa3m+pP/jh+3XXXP0UCJ9ROGIAFV1/50pljJ+xWWciMkkldcSk2txwWE88YJ0/LcaGvasII4ZA2fxiVJiPyub0DaXT7WngdQsjJyYKHwU40EUVeZSkiDJCOpCW2HakRsWRCOng0hblCMByEx+NGZ0srvO4ORFkzyMrPhpEBk6Cl0bMbSTuLvYKFELvZgQa+qfIyIUob9MjJc3U++sj/u4fDJ9ROGACN2tLfP3ptlHG30OkQUtIIGgTW7dkhzr7gPFS6coRBhuASkDqWrcuzLHDqMjDRgwcYzKRjYTjNRiSpwu3uToqPR8jNQXsiiZCaFAkeLIMMaOBhIIB2sxVOkx26FOBr9TA6jCHbrIODjOSxDyrMx9BBg+URltHdpJkxmxCghi55+He3c/iEm3LCMzlx/MTxe361eNED7q5OGGmhswqLsZu1/ae+XI0RU8fIqqoC+CSE0waJcEwWsRzem4e2EgR/ZzcBMcNGs5emS42EE3SVKiw5eUg7rIib9UjoMgAzONA9StobNagiJ2NDPv1vlkkgE08f06zxrBPk5eVhw57doo2BWEACaYMZc6665tXZc+a9SVZPuH0nADSqv1my5MHp06d/3MxX3F2REFzM3BqRxtPvrRADJowVPxk7EO4QhBUQ5lQKeQagkocrNuiQDgUZTKWQBUCGGeJwfcTnQZipLo0/svMJD+dnNLeXjkPKCETCB1s6BktMYmC2BRP79iP0CvbR08RI18+s0+RwoLyiau8rL798NUl/p/adAdCoM2efOeS0UbsOMwts9wWRX9EPqqsST72zGsJSgJ/PnoV8u1VSu6nySdiEKksdOlnhVGQpD5grgCISKmRnCIQcfmdYSQ52RSD522QBrw5g5e9cPqnikeeNHCtHF/eVh5paURMMwM2JrXS1ILBFRa6W6n27R3D6d24nBYAQIr16zZpzho4ctffgocOod3sgC0vgZKLz0e5dWPX1ZoybPBkXT5skXdkmUIAi5E0KfTAjcnRArh6ylLHEwGw7KsxmFNK3l7H4V8mEK18PGGOAjUcp5D8TRg2R0y6chtbuTrGz5pAI8Eo1JCLwMD2WRj0KS8taDx8+XM7pJ9VOCgBtp9zc3MDq1avPnDDhzE2HGhux5WgNOnhPlUGVqDNn8NKGtWJrU6MYM/FsXDD5bDl5wEBZYqRJjAPJFESId7yZHsPP2D7CO6/y/QACEtlhYJDdgnF8ATJi5Gi0pBLiufWr8VW0U9baJHaF/PBS+oL2ZfCgYftaGhrLNH5Otp80ANqGLpcr/PXmTWddMfuKV3weL6qPHkEry1Uq3wNaGL0dpd9+b/16fL3/gAgJRfQZOgLjTxuHUYOHY1Cf/hhU2RvlJRWoLCrDgJJe2v8Aw5DKfrKsqAKBYBzrv96BHUdr4aNWNARioos2RdgNgEmHyy69fMWBHbuGa3ycSj8lAL7Z+M3XXr3mT0/8aaFFNfiba5rR0diJbmZ9qsWBkMOOBkViY2cr3qvZi3W1NTgc8KGTb5k6QgHEyIEvlUAbCxy1TIR2tTeLrc0NOOr3IUS/HmSW6Q/RnVLdoQI5Zof/yUefuHnFq6/P+mb/U/nm9qey/O9rb7715ueqd+wfxpL2Mj8P39DsRl1HJ7pSGdQz42uRaQRsFnhYp2sI+tFGTYkLHVq8HnhY7Q2kU+hWk3An44wNEmiPxeHjPY9lBEy0E1qecPXcq1/xdHlzbr311qf/vvOp/VJObfl/Xl3Wr6zlmVdenL9vV/W4OVfNX5aCLtLp9cFPa+3VDhYJo4txQ4hu05+Ko5kpq5/PPbEI2ugiPbEoknoDMzkdVKEwLFJgz84JXXzJpa9s37Z30LJly675zzue+l/fKwDfsDNg1NBty5a/Mv/g0dpBS5989rapM2b+VW+xd0tav3hKhTcUhVbNZQ6EOJOXKEPiJA1bWgCpjITV7vRMmz5j9RNPPn3rlpqakrdef+2aMWOGsyj8zQ7f3/cPAsA37PUtLW2+86aFT372znsXtlTX9Nq8YfNZf37muRsXL7r3367/2YLnLrli9rJZc6989caFC55bvHjRQ3/+8wvXb/5q45iw35e/etX7599x88KnhtDQfkPvh/j+QQH4jwwXFRVFTj/99E0LFtzwwpKHf7Po2edeXLj8tTfnL3/1jaufe/bFhUuWPLz4uutueHHChAk7/uO6H/r3fxsAP/RBTpb+jwCcLHL/V9b9qAH/VyR5suf4X68BJ3vwb9b9fwAAAP//f5pFWAAAAAZJREFUAwDAdHU1lywMdAAAAABJRU5ErkJggg==" alt="" width="128" height="128" />
+        </div>
+        <div class="brand-copy">
+          <div class="brand-title">Risk Manager</div>
+          <div class="brand-meta">
+            <span class="brand-subtitle">Internal Risk Control Platform</span>
+            <span class="brand-release">Version 3.0</span>
+          </div>
         </div>
       </div>
       <div class="header-stats" aria-label="Thống kê nhanh">
-        <div class="stat-card"><span>Cẩm Nang Xử Lý 🎯</span><strong id="totalBadge">0</strong></div>
-        <div class="stat-card"><span>Bộ Sưu Tập ❤️</span><strong id="favoriteCount">0</strong></div>
-        <div class="stat-card"><span>Mục Gần Đây 🔖</span><strong id="recentCount">0</strong></div>
+        <div class="stat-card"><span>Tổng template</span><strong id="totalBadge">0</strong></div>
+        <div class="stat-card"><span>Favorite</span><strong id="favoriteCount">0</strong></div>
+        <div class="stat-card"><span>Recent</span><strong id="recentCount">0</strong></div>
         <button id="themeToggle" class="theme-toggle icon-button" type="button" aria-label="Đổi giao diện">◐</button>
       </div>
     </header>
@@ -1169,10 +1875,10 @@
     <div class="workspace">
       <aside class="sidebar">
         <nav class="side-nav" aria-label="Điều hướng">
-          <button id="tabMain" class="tab-btn active" type="button"><span>⌂</span>Cẩm Nang Xử Lý 🎯</button>
-          <button id="tabMine" class="tab-btn" type="button"><span>★</span>Bộ Sưu Tập ❤️</button>
-          <button id="tabRecent" class="tab-btn" type="button"><span>◷</span>Mục Gần Đây 🔖</button>
-          <button id="tabRules" class="tab-btn" type="button"><span>✓</span>Hướng dẫn nghiệp vụ 🌟</button>
+          <button id="tabMain" class="tab-btn active" type="button"><span>⌂</span>Tất cả template</button>
+          <button id="tabMine" class="tab-btn" type="button"><span>★</span>Favorite</button>
+          <button id="tabRecent" class="tab-btn" type="button"><span>◷</span>Recent</button>
+          <button id="tabRules" class="tab-btn" type="button"><span>✓</span>Hướng dẫn nghiệp vụ</button>
         </nav>
         <div class="sidebar-label">Category</div>
         <div id="categoryList" class="category-list"></div>
@@ -1223,7 +1929,7 @@
         </div>
 
         <div id="mineArea" style="display:none;">
-          <div class="page-heading"><div><div class="eyebrow">BỘ SƯU TẬP</div><h2>Nội Dung Đã Sưu Tập</h2><p>Nội dung bạn đã lưu để truy cập nhanh.</p></div></div>
+          <div class="page-heading"><div><div class="eyebrow">BỘ SƯU TẬP</div><h2>Favorite</h2><p>Nội dung bạn đã lưu để truy cập nhanh.</p></div></div>
           <div class="results-head">
             <div class="results-title">Danh sách yêu thích</div>
             <div class="view-actions">
@@ -1542,7 +2248,7 @@ function renderRecent() {
     const favoriteBtn = document.createElement('button');
     favoriteBtn.className = 'small ghost';
     favoriteBtn.type = 'button';
-    favoriteBtn.textContent = isStickySaved(item) ? '★ Đã Sưu Tập' : '☆ Sưu Tập';
+    favoriteBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
     favoriteBtn.addEventListener('click', () => addSticky(item));
 
     actions.appendChild(copyBtn);
@@ -1994,7 +2700,7 @@ function render() {
     const saveBtn = document.createElement('button');
     saveBtn.className = 'small ghost';
     saveBtn.type = 'button';
-    saveBtn.textContent = isStickySaved(item) ? '★ Đã Sưu Tập' : '☆ Sưu Tập';
+    saveBtn.textContent = isStickySaved(item) ? '★ Đã lưu' : '☆ Favorite';
     saveBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       addSticky(item);
