@@ -2200,33 +2200,33 @@
     }
 
     [data-theme="dark"] .category-list .category-button:nth-child(5n + 1) {
-      --item-color: #fb7185;
-      --item-soft: rgba(251, 113, 133, .11);
-      --item-active: rgba(251, 113, 133, .18);
+      --item-color: #f43f5e;
+      --item-soft: rgba(244, 63, 94, .13);
+      --item-active: rgba(244, 63, 94, .20);
     }
 
     [data-theme="dark"] .category-list .category-button:nth-child(5n + 2) {
-      --item-color: #fb923c;
-      --item-soft: rgba(251, 146, 60, .11);
-      --item-active: rgba(251, 146, 60, .18);
+      --item-color: #f97316;
+      --item-soft: rgba(249, 115, 22, .13);
+      --item-active: rgba(249, 115, 22, .20);
     }
 
     [data-theme="dark"] .category-list .category-button:nth-child(5n + 3) {
-      --item-color: #a78bfa;
-      --item-soft: rgba(167, 139, 250, .11);
-      --item-active: rgba(167, 139, 250, .18);
+      --item-color: #8b5cf6;
+      --item-soft: rgba(139, 92, 246, .13);
+      --item-active: rgba(139, 92, 246, .20);
     }
 
     [data-theme="dark"] .category-list .category-button:nth-child(5n + 4) {
-      --item-color: #38bdf8;
-      --item-soft: rgba(56, 189, 248, .11);
-      --item-active: rgba(56, 189, 248, .18);
+      --item-color: #0ea5e9;
+      --item-soft: rgba(14, 165, 233, .13);
+      --item-active: rgba(14, 165, 233, .20);
     }
 
     [data-theme="dark"] .category-list .category-button:nth-child(5n + 5) {
-      --item-color: #34d399;
-      --item-soft: rgba(52, 211, 153, .11);
-      --item-active: rgba(52, 211, 153, .18);
+      --item-color: #10b981;
+      --item-soft: rgba(16, 185, 129, .13);
+      --item-active: rgba(16, 185, 129, .20);
     }
 
     .sidebar .tab-btn,
@@ -2621,9 +2621,11 @@
 
     .card:hover,
     .sticky-item:hover {
-      border-color: rgba(37, 99, 235, .28);
+      border-color: color-mix(in srgb, var(--tone, var(--accent)) 38%, var(--ui-border));
       background: rgba(255, 255, 255, .90);
-      box-shadow: var(--ui-shadow-hover);
+      box-shadow:
+        0 18px 42px color-mix(in srgb, var(--tone, var(--accent)) 14%, transparent),
+        0 8px 20px rgba(15, 23, 42, .07);
       transform: translateY(-2px);
     }
 
@@ -2635,18 +2637,83 @@
     .card::before,
     .sticky-item::before {
       width: 3px;
-      background: var(--accent);
+      background: var(--tone, var(--accent));
       opacity: .78;
-      transition: opacity var(--ui-speed) var(--ui-ease);
+      transition:
+        opacity var(--ui-speed) var(--ui-ease),
+        box-shadow var(--ui-speed) var(--ui-ease);
     }
 
     .card:hover::before,
-    .sticky-item:hover::before { opacity: 1; }
+    .sticky-item:hover::before {
+      opacity: 1;
+      box-shadow: 3px 0 12px var(--tone-soft, var(--ui-blue-soft));
+    }
 
-    .card[data-tone],
-    .sticky-item[data-tone] {
-      --tone: var(--accent);
-      --tone-soft: var(--ui-blue-soft);
+    .card[data-tone="red"],
+    .sticky-item[data-tone="red"] {
+      --tone: #f43f5e;
+      --tone-soft: rgba(244, 63, 94, .10);
+    }
+
+    .card[data-tone="orange"],
+    .sticky-item[data-tone="orange"] {
+      --tone: #f97316;
+      --tone-soft: rgba(249, 115, 22, .10);
+    }
+
+    .card[data-tone="purple"],
+    .sticky-item[data-tone="purple"] {
+      --tone: #8b5cf6;
+      --tone-soft: rgba(139, 92, 246, .10);
+    }
+
+    .card[data-tone="gray"],
+    .sticky-item[data-tone="gray"] {
+      --tone: #64748b;
+      --tone-soft: rgba(100, 116, 139, .10);
+    }
+
+    .card[data-tone="green"],
+    .sticky-item[data-tone="green"] {
+      --tone: #10b981;
+      --tone-soft: rgba(16, 185, 129, .10);
+    }
+
+    .card[data-tone="blue"],
+    .sticky-item[data-tone="blue"] {
+      --tone: #0ea5e9;
+      --tone-soft: rgba(14, 165, 233, .10);
+    }
+
+    /*
+      systemSelect and categoryList are generated from the same ordered
+      system collection. When one CATEGORY is selected, every card in
+      that system inherits the matching sidebar palette.
+    */
+    #mainArea:has(#systemSelect option:nth-child(5n + 2):checked) .card {
+      --tone: #f43f5e;
+      --tone-soft: rgba(244, 63, 94, .10);
+    }
+
+    #mainArea:has(#systemSelect option:nth-child(5n + 3):checked) .card {
+      --tone: #f97316;
+      --tone-soft: rgba(249, 115, 22, .10);
+    }
+
+    #mainArea:has(#systemSelect option:nth-child(5n + 4):checked) .card {
+      --tone: #8b5cf6;
+      --tone-soft: rgba(139, 92, 246, .10);
+    }
+
+    #mainArea:has(#systemSelect option:nth-child(5n + 5):checked) .card {
+      --tone: #0ea5e9;
+      --tone-soft: rgba(14, 165, 233, .10);
+    }
+
+    #mainArea:has(#systemSelect option:nth-child(5n + 1):not(:first-child):checked) .card {
+      --tone: #10b981;
+      --tone-soft: rgba(16, 185, 129, .10);
     }
 
     .card-top {
@@ -2690,8 +2757,8 @@
       display: grid;
       place-items: center;
       border-radius: 8px;
-      color: var(--accent);
-      background: var(--ui-blue-soft);
+      color: var(--tone, var(--accent));
+      background: var(--tone-soft, var(--ui-blue-soft));
     }
 
     .card-top .mini-tags {
@@ -2708,10 +2775,10 @@
     .tag {
       max-width: 100%;
       padding: 5px 8px;
-      border: 1px solid rgba(37, 99, 235, .11);
+      border: 1px solid color-mix(in srgb, var(--tone, var(--accent)) 18%, transparent);
       border-radius: 999px;
-      color: var(--accent);
-      background: var(--ui-blue-soft);
+      color: var(--tone, var(--accent));
+      background: var(--tone-soft, var(--ui-blue-soft));
       box-shadow: none;
       backdrop-filter: none;
       font-size: 10px;
@@ -2725,7 +2792,7 @@
     }
 
     .tag:hover {
-      background: rgba(37, 99, 235, .12);
+      background: color-mix(in srgb, var(--tone, var(--accent)) 14%, transparent);
       transform: translateY(-1px);
     }
 
@@ -2754,17 +2821,23 @@
       border-radius: 12px;
       background: var(--block-bg);
       box-shadow: none;
+      transition:
+        border-color var(--ui-speed) var(--ui-ease),
+        background-color var(--ui-speed) var(--ui-ease),
+        box-shadow var(--ui-speed) var(--ui-ease);
     }
 
     .copy-block:hover {
-      border-color: var(--ui-border-strong);
-      background: var(--block-bg);
-      box-shadow: none;
+      border-color: color-mix(in srgb, var(--tone, var(--accent)) 32%, var(--ui-border));
+      background: color-mix(in srgb, var(--block-bg) 96%, var(--tone, var(--accent)) 4%);
+      box-shadow:
+        0 10px 24px color-mix(in srgb, var(--tone, var(--accent)) 10%, transparent),
+        0 3px 10px rgba(15, 23, 42, .045);
       transform: none;
     }
 
     .copy-label {
-      color: var(--accent);
+      color: var(--tone, var(--accent));
       font-weight: 700;
     }
 
