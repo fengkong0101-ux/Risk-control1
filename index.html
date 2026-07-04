@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1220">
+  <title>REN Risk Manager</title>
+  <script src="maintenance-config.js"></script>
+  <script>
+    (() => {
+      const config = window.MAINTENANCE_CONFIG;
+      const now = Date.now();
+      const start = Date.parse(config.start);
+      const end = Date.parse(config.end);
+      const isMaintenance =
+        config.enabled &&
+        now >= start &&
+        now < end;
+
+      window.location.replace(
+        isMaintenance ? config.maintenanceUrl : config.dashboardUrl
+      );
+    })();
+  </script>
+</head>
+<body>
+  <noscript>
+    <p>Vui lòng bật JavaScript để truy cập trang.</p>
+  </noscript>
+</body>
+</html>
