@@ -3112,6 +3112,287 @@
         transition-duration: .01ms !important;
       }
     }
+
+    /* =========================================================
+       CROSS-BROWSER RENDERING SAFETY
+       Prevent black/blank compositor layers on older GPUs,
+       forced browser dark mode and partial CSS feature support.
+       ========================================================= */
+    html[data-theme="light"] {
+      color-scheme: light;
+      background-color: var(--bg, #f8fafc);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      background-color: var(--bg, #0b1220);
+    }
+
+    body {
+      color: var(--text, #0f172a);
+      background-color: var(--bg, #f8fafc);
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    body::before {
+      display: none;
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    .app-header,
+    .sidebar,
+    .hero,
+    .filter-bar,
+    .page-heading,
+    .toast {
+      filter: none;
+      mix-blend-mode: normal;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .hero::before,
+    .hero::after {
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    .card,
+    .sticky-item {
+      color: var(--text, #0f172a);
+      background-color: var(--bg-soft, #ffffff);
+      background-image: none;
+      opacity: 1;
+      visibility: visible;
+      filter: none;
+      mix-blend-mode: normal;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      backface-visibility: visible;
+      will-change: auto;
+      animation: none;
+      transform: none;
+    }
+
+    html[data-theme="light"] .card,
+    html[data-theme="light"] .sticky-item {
+      color: var(--text, #0f172a);
+      background-color: var(--bg-soft, #ffffff);
+      border-color: var(--border, #e2e8f0);
+    }
+
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .sticky-item {
+      color: var(--text, #f1f5f9);
+      background-color: var(--bg-soft, #111c2f);
+      border-color: var(--border, #263245);
+    }
+
+    .card:hover,
+    .sticky-item:hover {
+      background-color: var(--bg-soft, #ffffff);
+      background-image: none;
+      border-color: var(--border-2, #bfdbfe);
+      box-shadow:
+        0 18px 42px rgba(37, 99, 235, .12),
+        0 8px 20px rgba(15, 23, 42, .08);
+      filter: none;
+      transform: none;
+    }
+
+    html[data-theme="dark"] .card:hover,
+    html[data-theme="dark"] .sticky-item:hover {
+      background-color: var(--bg-soft, #111c2f);
+      border-color: var(--border-2, #3b82f6);
+      box-shadow:
+        0 18px 42px rgba(37, 99, 235, .18),
+        0 8px 20px rgba(0, 0, 0, .24);
+    }
+
+    .card::before,
+    .sticky-item::before {
+      background-color: var(--tone, var(--accent, #2563eb));
+      opacity: 1;
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    .card[data-tone="red"],
+    .sticky-item[data-tone="red"] {
+      --tone: #f43f5e;
+      --tone-soft: rgba(244, 63, 94, .12);
+    }
+
+    .card[data-tone="orange"],
+    .sticky-item[data-tone="orange"] {
+      --tone: #f97316;
+      --tone-soft: rgba(249, 115, 22, .12);
+    }
+
+    .card[data-tone="purple"],
+    .sticky-item[data-tone="purple"] {
+      --tone: #8b5cf6;
+      --tone-soft: rgba(139, 92, 246, .12);
+    }
+
+    .card[data-tone="gray"],
+    .sticky-item[data-tone="gray"] {
+      --tone: #64748b;
+      --tone-soft: rgba(100, 116, 139, .12);
+    }
+
+    .card[data-tone="green"],
+    .sticky-item[data-tone="green"] {
+      --tone: #10b981;
+      --tone-soft: rgba(16, 185, 129, .12);
+    }
+
+    .card[data-tone="blue"],
+    .sticky-item[data-tone="blue"],
+    .card:not([data-tone]),
+    .sticky-item:not([data-tone]) {
+      --tone: #0ea5e9;
+      --tone-soft: rgba(14, 165, 233, .12);
+    }
+
+    .card .title,
+    .sticky-item-title {
+      color: var(--text, #0f172a);
+      -webkit-text-fill-color: currentColor;
+      opacity: 1;
+      visibility: visible;
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    html[data-theme="dark"] .card .title,
+    html[data-theme="dark"] .sticky-item-title {
+      color: var(--text, #f1f5f9);
+      -webkit-text-fill-color: currentColor;
+    }
+
+    .card-preview,
+    .content,
+    .sticky-item-content,
+    .results-title {
+      color: var(--muted, #64748b);
+      -webkit-text-fill-color: currentColor;
+      visibility: visible;
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    html[data-theme="dark"] .card-preview,
+    html[data-theme="dark"] .content,
+    html[data-theme="dark"] .sticky-item-content,
+    html[data-theme="dark"] .results-title {
+      color: var(--muted, #a3afc2);
+    }
+
+    .tag,
+    .chev,
+    .sticky-chevron,
+    .copy-label {
+      color: var(--tone, var(--accent, #2563eb));
+      -webkit-text-fill-color: currentColor;
+      filter: none;
+      mix-blend-mode: normal;
+    }
+
+    .tag,
+    .chev,
+    .sticky-chevron {
+      background-color: var(--tone-soft, var(--accent-soft, rgba(37, 99, 235, .10)));
+      background-image: none;
+    }
+
+    .copy-block {
+      color: var(--text, #0f172a);
+      background-color: var(--panel-2, #f8fafc);
+      background-image: none;
+      opacity: 1;
+      visibility: visible;
+      filter: none;
+      mix-blend-mode: normal;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      transform: none;
+    }
+
+    html[data-theme="dark"] .copy-block {
+      color: var(--text, #f1f5f9);
+      background-color: var(--panel-2, #172337);
+    }
+
+    .copy-block:hover {
+      background-color: var(--panel-2, #f8fafc);
+      background-image: none;
+      border-color: var(--border-2, #bfdbfe);
+      box-shadow:
+        0 10px 24px rgba(37, 99, 235, .10),
+        0 3px 10px rgba(15, 23, 42, .05);
+      filter: none;
+      transform: none;
+    }
+
+    html[data-theme="dark"] .copy-block:hover {
+      background-color: var(--panel-2, #172337);
+      border-color: var(--border-2, #3b82f6);
+    }
+
+    .ui-motion-content {
+      will-change: auto;
+      backface-visibility: visible;
+      filter: none;
+      mix-blend-mode: normal;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .card[data-open="1"] > .ui-motion-content,
+    .sticky-item[data-open="1"] > .ui-motion-content {
+      display: grid !important;
+      max-height: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      filter: none !important;
+      transform: none !important;
+      will-change: auto !important;
+    }
+
+    @supports not (color: color-mix(in srgb, red, blue)) {
+      .card:hover,
+      .sticky-item:hover,
+      .copy-block:hover {
+        border-color: var(--border-2, #bfdbfe);
+      }
+
+      .tag {
+        border-color: var(--border, #dbeafe);
+      }
+    }
+
+    @media (forced-colors: active) {
+      .card,
+      .sticky-item,
+      .copy-block {
+        color: CanvasText;
+        background: Canvas;
+        border-color: CanvasText;
+        forced-color-adjust: auto;
+      }
+
+      .card .title,
+      .sticky-item-title,
+      .card-preview,
+      .content,
+      .sticky-item-content {
+        color: CanvasText;
+        -webkit-text-fill-color: CanvasText;
+      }
+    }
   </style>
 </head>
 <body>
@@ -4084,18 +4365,87 @@ document.addEventListener('keydown', (event) => {
 initTheme();
 loadSticky();
 loadRecent();
-initializeWithData(DEFAULT_DATA);
 
-rulesData = Array.isArray(window.RULES_DATA) ? window.RULES_DATA : [];
-renderRules();
+const DATA_URL = new URL('./data.json', document.baseURI).href;
+const RULES_URL = new URL('./rules.js', document.baseURI).href;
 
-fetch('./data.json', { cache: 'no-store' })
-  .then(r => {
-    if (!r.ok) throw new Error('data.json not found');
-    return r.json();
-  })
-  .then(arr => initializeWithData(arr))
-  .catch(() => {});
+async function fetchArrayFile(url, fileName) {
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error(`${fileName} HTTP ${response.status}`);
+  }
+
+  const value = await response.json();
+  if (!Array.isArray(value)) {
+    throw new Error(`${fileName} phải chứa một JSON array`);
+  }
+
+  return value;
+}
+
+function parseRulesSource(source) {
+  const text = String(source || '').replace(/^\uFEFF/, '').trim();
+  const arrayStart = text.indexOf('[');
+  const arrayEnd = text.lastIndexOf(']');
+
+  if (arrayStart < 0 || arrayEnd <= arrayStart) {
+    throw new Error('rules.js không chứa dữ liệu dạng array');
+  }
+
+  const value = JSON.parse(text.slice(arrayStart, arrayEnd + 1));
+  if (!Array.isArray(value)) {
+    throw new Error('rules.js phải chứa một array');
+  }
+
+  return value;
+}
+
+async function loadRulesFile() {
+  if (Array.isArray(window.RULES_DATA) && window.RULES_DATA.length) {
+    return window.RULES_DATA;
+  }
+
+  const response = await fetch(RULES_URL, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error(`rules.js HTTP ${response.status}`);
+  }
+
+  return parseRulesSource(await response.text());
+}
+
+async function initializeApplication() {
+  const [dataResult, rulesResult] = await Promise.allSettled([
+    fetchArrayFile(DATA_URL, 'data.json'),
+    loadRulesFile()
+  ]);
+
+  const loadedData = dataResult.status === 'fulfilled' && dataResult.value.length
+    ? dataResult.value
+    : DEFAULT_DATA.slice();
+
+  rulesData = rulesResult.status === 'fulfilled'
+    ? rulesResult.value
+    : [];
+
+  initializeWithData(loadedData);
+  renderRules();
+
+  const loadErrors = [];
+  if (dataResult.status === 'rejected') {
+    console.error('[Risk Manager] Không tải được data.json:', dataResult.reason);
+    loadErrors.push('data.json');
+  }
+  if (rulesResult.status === 'rejected') {
+    console.error('[Risk Manager] Không tải được rules.js:', rulesResult.reason);
+    loadErrors.push('rules.js');
+  }
+
+  if (loadErrors.length) {
+    showToast(`Không tải được ${loadErrors.join(' và ')}`);
+  }
+}
+
+initializeApplication();
 </script>
 
 <script>
